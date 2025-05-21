@@ -58,7 +58,7 @@ const AppWithAuth = () => (
         <Route path="/pricing" element={<PricingPage />} />
 
         {/* Solution Pages */}
-        <Route path="/solutions/working-capital" element={<WorkingCapital />} />
+        <Route path="/working-capital" element={<WorkingCapital />} />
         <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
 
         
