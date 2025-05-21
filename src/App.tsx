@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import WorkingCapital from "./pages/solutions/WorkingCapital";
+import InventoryFinancing from "./pages/solutions/InventoryFinancing";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +53,10 @@ const AppWithAuth = () => (
     <div className="min-h-screen flex flex-col">
       <Routes>
         <Route path="/" element={<Index />} />
+
+        {/* Solution Pages */}
+        <Route path="/solutions/working-capital" element={<WorkingCapital />} />
+        <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
         
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />

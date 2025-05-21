@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Leaf, Zap, ArrowRight, Package, Wallet, File, CreditCard } from "lucide-react";
+import { Leaf, Zap, ArrowRight, Package, Wallet, File, CreditCard, Users, Briefcase } from "lucide-react";
 import { useState } from "react";
 import Hero from "@/components/Hero";
 import Solutions from "@/components/Solutions";
@@ -43,7 +43,7 @@ const Index = () => {
       <Hero />
       <Solutions />
       <HowItWorks />
-      
+
       {/* Benefits Section - Was previously after About, now before */}
       <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="container mx-auto px-4">
@@ -55,8 +55,8 @@ const Index = () => {
               Streamline your operations, improve cash flow, and accelerate growth with our all-in-one platform.
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+          <div className="grid md:grid-cols-4 gap-8 max-w-5xl mx-auto">
             <Card className="p-6 border-solar-green-100 hover:shadow-md transition-all">
               <div className="mb-4 bg-solar-green-50 w-12 h-12 flex items-center justify-center rounded-lg">
                 <File className="h-6 w-6 text-solar-green-600" />
@@ -66,7 +66,17 @@ const Index = () => {
                 Create and send professional invoices to your customers in seconds. Track payments and get paid faster.
               </p>
             </Card>
-            
+
+            <Card className="p-6 border-solar-green-100 hover:shadow-md transition-all">
+              <div className="mb-4 bg-solar-green-50 w-12 h-12 flex items-center justify-center rounded-lg">
+                <Users className="h-6 w-6 text-solar-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Manage Teams</h3>
+              <p className="text-gray-600">
+                Organize your workforce, assign roles and permissions, and improve collaboration across your renewable energy business.
+              </p>
+            </Card>
+
             <Card className="p-6 border-solar-green-100 hover:shadow-md transition-all">
               <div className="mb-4 bg-solar-green-50 w-12 h-12 flex items-center justify-center rounded-lg">
                 <Wallet className="h-6 w-6 text-solar-green-600" />
@@ -76,7 +86,7 @@ const Index = () => {
                 Accept payments directly to your wallet. Multiple payment methods to make it easy for your customers.
               </p>
             </Card>
-            
+
             <Card className="p-6 border-solar-green-100 hover:shadow-md transition-all">
               <div className="mb-4 bg-solar-green-50 w-12 h-12 flex items-center justify-center rounded-lg">
                 <CreditCard className="h-6 w-6 text-solar-green-600" />
@@ -89,10 +99,10 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       {/* About section - Was previously before Benefits, now after */}
       <About />
-      
+
       {/* FAQ Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-gray-50" id="faqs">
         <div className="container mx-auto px-4">
@@ -102,7 +112,7 @@ const Index = () => {
               Common questions about our financing solutions for solar providers
             </p>
           </div>
-          
+
           <div className="max-w-3xl mx-auto">
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
@@ -119,16 +129,16 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-solar-green-50 via-white to-solar-yellow-50 opacity-70 z-0"></div>
-        
+
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-solar-green-400 via-solar-yellow-400 to-solar-blue-400"></div>
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-solar-green-100 rounded-full mix-blend-multiply opacity-30 blur-2xl"></div>
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-8 md:mb-12">
             <Zap className="h-10 w-10 text-solar-yellow-500 mx-auto mb-4" />
@@ -137,7 +147,7 @@ const Index = () => {
               Choose the financial solution that best fits your business needs.
             </p>
           </div>
-          
+
           <div className="flex flex-col md:flex-row gap-6 md:gap-8 max-w-3xl mx-auto">
             <Card className="flex-1 p-6 hover:shadow-xl transition-all duration-300 border-solar-green-200 bg-white/80 backdrop-blur-sm overflow-hidden group relative">
               <div className="absolute inset-0 bg-gradient-to-br from-solar-green-500/5 to-solar-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -149,13 +159,13 @@ const Index = () => {
                 <p className="text-gray-500">Flexible financing for your operational expenses and growth initiatives.</p>
                 <Button asChild className="w-full bg-solar-green-600 hover:bg-solar-green-700 text-white">
                   <Link to="/register">
-                    <span className="mr-2">Get Started</span> 
+                    <span className="mr-2">Get Started</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </div>
             </Card>
-            
+
             <Card className="flex-1 p-6 hover:shadow-xl transition-all duration-300 border-0 overflow-hidden group relative">
               <div className="absolute inset-0 bg-gradient-to-br from-solar-green-600 to-solar-green-700 z-0"></div>
               <div className="text-center space-y-4 relative z-10">
@@ -166,7 +176,7 @@ const Index = () => {
                 <p className="text-white/80">Stock up on solar panels and equipment without tying up your capital.</p>
                 <Button asChild className="w-full bg-white text-solar-green-700 hover:bg-solar-yellow-50">
                   <Link to="/register">
-                    <span className="mr-2">Get Started</span> 
+                    <span className="mr-2">Get Started</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -175,7 +185,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       <footer className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-8 md:py-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,_var(--tw-gradient-stops))] from-solar-green-900/30 to-transparent"></div>
         <div className="container mx-auto px-4 relative z-10">
@@ -186,7 +196,7 @@ const Index = () => {
               </h3>
               <p className="text-gray-400">Specialized financing for solar providers.</p>
             </div>
-            
+
             <div className="md:col-span-1">
               <h4 className="font-semibold mb-4">Solutions</h4>
               <ul className="space-y-2">
@@ -195,7 +205,7 @@ const Index = () => {
                 <li><a href="#" className="text-gray-400 hover:text-solar-green-300 transition-colors flex items-center gap-1">Microgrid Financing <span className="text-xs bg-gray-700 px-1 py-0.5 rounded">Coming Soon</span></a></li>
               </ul>
             </div>
-            
+
             <div className="md:col-span-1">
               <h4 className="font-semibold mb-4">Links</h4>
               <ul className="space-y-2">
@@ -205,7 +215,7 @@ const Index = () => {
                 <li><a href="#faqs" className="text-gray-400 hover:text-solar-green-300 transition-colors">FAQs</a></li>
               </ul>
             </div>
-            
+
             <div className="md:col-span-1">
               <h4 className="font-semibold mb-4">Contact</h4>
               <p className="text-gray-400">hello@getsolcap.com</p>
