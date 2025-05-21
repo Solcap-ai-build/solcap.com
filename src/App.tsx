@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import WorkingCapital from "./pages/solutions/WorkingCapital";
 import InventoryFinancing from "./pages/solutions/InventoryFinancing";
+import PricingPage from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -54,10 +55,12 @@ const AppWithAuth = () => (
       <Routes>
         <Route path="/" element={<Index />} />
 
+        <Route path="/pricing" element={<PricingPage />} />
+
         {/* Solution Pages */}
         <Route path="/solutions/working-capital" element={<WorkingCapital />} />
         <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
-        
+
         
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
