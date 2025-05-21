@@ -1,5 +1,5 @@
 # Welcome to your Lovable project
-
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4ab767e4-5158-41a3-bd88-0688fab8657f/deploy-status)](https://app.netlify.com/projects/getsolcap/deploys)
 ## Project info
 
 **URL**: https://lovable.dev/projects/a20f7c8e-9ab5-441a-88a4-ba3c5579ca67
