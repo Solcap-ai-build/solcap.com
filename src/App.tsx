@@ -58,6 +58,7 @@ const AppWithAuth = () => (
         <Route path="/solutions/working-capital" element={<WorkingCapital />} />
         <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
         
+        
         {/* Catch-all route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
