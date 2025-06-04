@@ -83,6 +83,7 @@ export const useAuthOperations = () => {
           // Navigation will be handled by AuthNavigationHandler
         } else {
           toast.success("Registration successful! Please check your email for verification.");
+          window.location.href='/verify-email'
         }
       }
     } catch (error) {
