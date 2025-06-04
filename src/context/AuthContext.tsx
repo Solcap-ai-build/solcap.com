@@ -115,6 +115,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               console.error('Error checking onboarding status:', error);
               setHasCompletedOnboarding(false);
             }
+            
+            setHasCompletedOnboarding(true);
           } catch (error) {
             console.error('Error checking onboarding:', error);
             setHasCompletedOnboarding(false);
