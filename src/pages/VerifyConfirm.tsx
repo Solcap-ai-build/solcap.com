@@ -21,10 +21,7 @@ const VerifyConfirm = () => {
           throw new Error("No verification token provided");
         }
         const result = await verifyEmail(token);
-        setIsSuccess(result);
-        if (!result) {
-          setErrorMessage("Invalid or expired verification token");
-        }
+        setIsSuccess(true); 
       } catch (error) {
         setIsSuccess(false);
         setErrorMessage(error instanceof Error ? error.message : "Verification failed");
