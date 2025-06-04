@@ -54,8 +54,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Error checking onboarding status:', error);
         return;
       }
-      
-      setHasCompletedOnboarding(data?.status === 'completed');
     } catch (error) {
       console.error('Error in checkOnboardingStatus:', error);
       setHasCompletedOnboarding(false);
@@ -64,42 +62,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initialize auth state
   useEffect(() => {
-    console.log('Setting up auth state listener...');
     
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
         setSession(session);
         
         if (session?.user) {
-          console.log('User found, creating user object...', session.user.email);
           try {
             const userObj = await createUserObject(session.user);
-            console.log('User object created:', userObj);
             setUser(userObj);
-            
-            // Check onboarding status after user is set
-            setTimeout(async () => {
-              try {
-                const { data, error } = await supabase
-                  .from('business_onboarding')
-                  .select('status')
-                  .eq('user_id', session.user.id)
-                  .single();
-                
-                if (error && error.code !== 'PGRST116') {
-                  console.error('Error checking onboarding status:', error);
-                  setHasCompletedOnboarding(false);
-                } else {
-                  setHasCompletedOnboarding(data?.status === 'completed');
-                }
-              } catch (error) {
-                console.error('Error checking onboarding:', error);
-                setHasCompletedOnboarding(false);
-              }
-            }, 100);
-            
           } catch (error) {
             console.error('Error creating user object:', error);
             setUser(null);
@@ -142,8 +114,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (error && error.code !== 'PGRST116') {
               console.error('Error checking onboarding status:', error);
               setHasCompletedOnboarding(false);
-            } else {
-              setHasCompletedOnboarding(data?.status === 'completed');
             }
           } catch (error) {
             console.error('Error checking onboarding:', error);
@@ -161,7 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => subscription.unsubscribe();
-  }, [createUserObject]);
+  }, []);
 
   return (
     <AuthContext.Provider 
