@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import WorkingCapital from "./pages/solutions/WorkingCapital";
 import InventoryFinancing from "./pages/solutions/InventoryFinancing";
 import PricingPage from "./pages/Pricing";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 import Login from "./pages/Login";
 import AdminLogin from "./pages/AdminLogin";
@@ -22,6 +23,8 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Pricing from "./pages/Pricing";
+import AuthNavigationHandler from "@/components/auth/AuthNavigationHandler";
+import SetupComplete from "./pages/SetupComplete";
 
 // Dashboard pags
 import DashboardHome from "./pages/dashboard/DashboardHome";
@@ -41,109 +44,87 @@ import ProjectsPage from "./pages/dashboard/ProjectsPage";
 
 const queryClient = new QueryClient();
 
-// Protected route component
-const ProtectedRoute = ({ 
-  children, 
-  requiredRole = undefined,
-  requiresOnboarding = false
-}: { 
-  children: React.ReactNode;
-  requiredRole?: "admin" | "technician" | "user";
-  requiresOnboarding?: boolean;
-}) => {
-  const { isAuthenticated, user } = useAuth();
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (requiredRole && user?.role !== requiredRole) {
-    // Redirect to their appropriate dashboard if they don't have the required role
-    return <Navigate to="/dashboard" replace />;
-  }
 
-  // Add logic to check if user has completed onboarding
-  // In a real app, you would have a flag in the user object
-  // For now we'll just redirect all dashboard access to onboarding
-  // if onboarding is not completed (demo purposes only)
-  const hasCompletedOnboarding = localStorage.getItem("onboardingCompleted") === "true";
-  
-  if (!hasCompletedOnboarding && !requiresOnboarding) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  
-  return <>{children}</>;
-};
 
-const AppWithAuth = () => (
-  <TooltipProvider>
-    <Toaster />
-    <Sonner />
-    <div className="min-h-screen flex flex-col">
-      <Routes>
-        <Route path="/" element={<Index />} />
-
-        <Route path="/pricing" element={<PricingPage />} />
-
-        
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/verify-confirm" element={<VerifyConfirm />} />
-        <Route path="/pricing" element={<Pricing />} />
-
-        <Route 
-          path="/onboarding" 
-          element={
-            <ProtectedRoute>
-              <Onboarding />
-            </ProtectedRoute>
-          } 
-        />
-
-        <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          >
-          <Route index element={<DashboardHome />} />
-          <Route path="wallet" element={<WalletPage />} />
-          <Route path="credit" element={<CreditPage />} />
-          <Route path="inventory" element={<InventoryPage />} />
-          <Route path="invoices" element={<InvoicesPage />} />
-          <Route path="transactions" element={<TransactionsPage />} />
-          <Route path="payment-links" element={<PaymentLinksPage />} />
-          <Route path="team" element={<TeamPage />} />
-          <Route path="customers" element={<CustomersPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-          <Route path="support" element={<SupportPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="company" element={<CompanyPage />} />
-        </Route>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>
+          <BrowserRouter>
+            <AuthNavigationHandler />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/verify-confirm" element={<VerifyConfirm />} />
+              <Route path="/setup-complete" element={<SetupComplete />} />
+              <Route path="/pricing" element={<Pricing />} />
               
-
-        <Route path="/solutions/working-capital" element={<WorkingCapital />} />
-        <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
-  </TooltipProvider>
-);
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <AppWithAuth />
-      </AuthProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
+              {/* Solution Pages */}
+              <Route path="/solutions/working-capital" element={<WorkingCapital />} />
+              <Route path="/solutions/inventory-financing" element={<InventoryFinancing />} />
+              
+              {/* Protected: Onboarding */}
+              <Route 
+                path="/onboarding" 
+                element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Protected: User Dashboard */}
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<DashboardHome />} />
+                <Route path="wallet" element={<WalletPage />} />
+                <Route path="credit" element={<CreditPage />} />
+                <Route path="inventory" element={<InventoryPage />} />
+                <Route path="invoices" element={<InvoicesPage />} />
+                <Route path="transactions" element={<TransactionsPage />} />
+                <Route path="payment-links" element={<PaymentLinksPage />} />
+                <Route path="team" element={<TeamPage />} />
+                <Route path="customers" element={<CustomersPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="support" element={<SupportPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+                <Route path="company" element={<CompanyPage />} />
+                <Route path="projects" element={<ProjectsPage />} />
+              </Route>
+              
+              {/* Protected: Admin Dashboard */}
+              <Route 
+                path="/admin/*" 
+                element={
+                  <ProtectedRoute requiredRole={['admin', 'super-admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              >
+              </Route>
+              
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;
