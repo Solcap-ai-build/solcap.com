@@ -27,21 +27,22 @@ import { Textarea } from "@/components/ui/textarea";
 const onboardingSchema = z.object({
   // Personal Information
   bvn: z.string().min(11, "BVN must be 11 digits").max(11, "BVN must be 11 digits"),
-  
+
   // Company Information (Steps 1-6)
   businessName: z.string().min(2, "Business name must be at least 2 characters"),
   rcNumber: z.string().min(1, "RC Number is required"),
   ninIdNumber: z.string().min(11, "NIN must be 11 digits").max(11, "NIN must be 11 digits"),
   companyType: z.string().min(1, "Company type is required"),
+  bizType: z.string().min(1, "Company type is required"),
   yearOfIncorporation: z.string().min(4, "Year is required"),
   businessDescription: z.string().min(10, "Business description must be at least 10 characters"),
-  
+
   // Company Contact Information
   businessPhoneNumber: z.string().min(11, "Phone number must be at least 11 characters"),
   companyAddress: z.string().min(5, "Address must be at least 5 characters"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  
+
   // Director Information (Step 7)
   directorBvn: z.string().min(11, "Director BVN must be 11 digits").max(11, "Director BVN must be 11 digits"),
   directorPhoneNumber: z.string().min(11, "Phone number must be at least 11 characters"),
@@ -50,7 +51,7 @@ const onboardingSchema = z.object({
   directorDateOfBirth: z.string().min(1, "Date of birth is required"),
   directorEmail: z.string().email("Please enter a valid email address"),
   directorAddress: z.string().min(5, "Address must be at least 5 characters"),
-  
+
   // Documents (Step 8) - Made optional for now
   cacDocument: z.instanceof(FileList).optional().transform(fileList => {
     return fileList && fileList.length > 0 ? fileList : undefined;
@@ -64,7 +65,7 @@ const Onboarding = () => {
   const { user, checkOnboardingStatus } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
     mode: "onChange",
@@ -74,6 +75,7 @@ const Onboarding = () => {
       rcNumber: "",
       ninIdNumber: "",
       companyType: "",
+      bizType: "",
       yearOfIncorporation: "",
       businessDescription: "",
       businessPhoneNumber: "",
@@ -93,42 +95,42 @@ const Onboarding = () => {
   const isStep1Complete = () => {
     const values = form.getValues();
     const errors = form.formState.errors;
-    
+
     // Check if all required step 1 fields are filled and have no errors
     const requiredFields = [
-      'bvn', 'businessName', 'rcNumber', 'ninIdNumber', 
+      'bvn', 'businessName', 'rcNumber', 'ninIdNumber',
       'companyType', 'yearOfIncorporation', 'businessDescription',
-      'businessPhoneNumber', 'companyAddress', 'state', 'city'
+      'businessPhoneNumber', 'companyAddress', 'state', 'city', "bizType"
     ];
-    
+
     const isComplete = requiredFields.every(field => {
       const value = values[field as keyof typeof values];
       const hasError = errors[field as keyof typeof errors];
       return value && value.toString().trim() !== '' && !hasError;
     });
-    
+
     return isComplete;
   };
-  
+
   const isStep2Complete = () => {
     const values = form.getValues();
     const errors = form.formState.errors;
-    
+
     const requiredFields = [
-      'directorBvn', 'directorPhoneNumber', 'directorFullName', 
-      'directorGender', 'directorDateOfBirth', 'directorEmail', 
+      'directorBvn', 'directorPhoneNumber', 'directorFullName',
+      'directorGender', 'directorDateOfBirth', 'directorEmail',
       'directorAddress'
     ];
-    
+
     const isComplete = requiredFields.every(field => {
       const value = values[field as keyof typeof values];
       const hasError = errors[field as keyof typeof errors];
       return value && value.toString().trim() !== '' && !hasError;
     });
-    
+
     return isComplete;
   };
-  
+
   const isStep3Complete = () => {
     // Make documents optional for now to avoid blocking users
     return true;
@@ -162,11 +164,11 @@ const Onboarding = () => {
     if (currentStep === 1) {
       // Validate step 1 fields
       const step1Fields = [
-        'bvn', 'businessName', 'rcNumber', 'ninIdNumber', 
+        'bvn', 'businessName', 'rcNumber', 'ninIdNumber',
         'companyType', 'yearOfIncorporation', 'businessDescription',
         'businessPhoneNumber', 'companyAddress', 'state', 'city'
       ];
-      
+
       const isValid = await form.trigger(step1Fields as any);
       if (isValid && isStep1Complete()) {
         setCurrentStep(2);
@@ -176,11 +178,11 @@ const Onboarding = () => {
     } else if (currentStep === 2) {
       // Validate step 2 fields
       const step2Fields = [
-        'directorBvn', 'directorPhoneNumber', 'directorFullName', 
-        'directorGender', 'directorDateOfBirth', 'directorEmail', 
+        'directorBvn', 'directorPhoneNumber', 'directorFullName',
+        'directorGender', 'directorDateOfBirth', 'directorEmail',
         'directorAddress'
       ];
-      
+
       const isValid = await form.trigger(step2Fields as any);
       if (isValid && isStep2Complete()) {
         setCurrentStep(3);
@@ -197,10 +199,10 @@ const Onboarding = () => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       console.log('Submitting onboarding data for user:', user.id);
-      
+
       // Check if onboarding already exists
       const { data: existingOnboarding } = await supabase
         .from('business_onboarding')
@@ -280,7 +282,7 @@ const Onboarding = () => {
       await checkOnboardingStatus();
 
       toast.success("KYC/KYB completed successfully! Welcome to SolCap.");
-      
+
       // Navigate to setup complete page
       navigate("/setup-complete");
     } catch (error) {
@@ -293,9 +295,9 @@ const Onboarding = () => {
   };
 
   const nigerianStates = [
-    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", 
-    "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", 
-    "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", 
+    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River",
+    "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano",
+    "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun",
     "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"
   ];
 
@@ -310,7 +312,7 @@ const Onboarding = () => {
             <span className="text-3xl font-bold text-solar-green-700">SolCap</span>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
           {/* Progress Steps Sidebar */}
           <div className="lg:col-span-1">
@@ -325,7 +327,7 @@ const Onboarding = () => {
                 <CardDescription>
                   Know Your Customer (KYC) and Know Your Business (KYB) verification is required to get started with SolCap
                 </CardDescription>
-                
+
                 <Tabs value={`step-${currentStep}`} onValueChange={(value) => setCurrentStep(parseInt(value.split('-')[1]))}>
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="step-1">Company & Personal</TabsTrigger>
@@ -378,7 +380,30 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
+                            <FormField
+                              control={form.control}
+                              name="bizType"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Business Type*</FormLabel>
+                                  <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select business type" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="Solar Installer">Solar Installer</SelectItem>
+                                      <SelectItem value="Solar Vendor">Solar Vendor</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+
                             <FormField
                               control={form.control}
                               name="rcNumber"
@@ -392,7 +417,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="ninIdNumber"
@@ -406,7 +431,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="companyType"
@@ -431,7 +456,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="yearOfIncorporation"
@@ -445,7 +470,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="businessPhoneNumber"
@@ -460,7 +485,11 @@ const Onboarding = () => {
                               )}
                             />
                           </div>
-                          
+
+                          <br />
+                          <hr />
+                          <br />
+
                           <FormField
                             control={form.control}
                             name="businessDescription"
@@ -475,6 +504,10 @@ const Onboarding = () => {
                             )}
                           />
                         </div>
+
+                        <br />
+                        <hr />
+                        <br />
 
                         <div className="mb-6">
                           <h3 className="text-lg font-semibold mb-4">Company Address</h3>
@@ -492,7 +525,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="state"
@@ -517,7 +550,7 @@ const Onboarding = () => {
                                 </FormItem>
                               )}
                             />
-                            
+
                             <FormField
                               control={form.control}
                               name="city"
@@ -533,10 +566,10 @@ const Onboarding = () => {
                             />
                           </div>
                         </div>
-                        
+
                         <div className="pt-4">
-                          <Button 
-                            type="button" 
+                          <Button
+                            type="button"
                             className="w-full bg-solar-green-600 hover:bg-solar-green-700"
                             onClick={handleNextStep}
                             disabled={!isStep1Complete()}
@@ -546,14 +579,14 @@ const Onboarding = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     {currentStep === 2 && (
                       <div className="space-y-4">
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <User className="mr-2 h-5 w-5" />
                           Director Information
                         </h3>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <FormField
                             control={form.control}
@@ -568,7 +601,7 @@ const Onboarding = () => {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="directorPhoneNumber"
@@ -582,7 +615,7 @@ const Onboarding = () => {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="directorFullName"
@@ -596,7 +629,7 @@ const Onboarding = () => {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="directorGender"
@@ -618,7 +651,7 @@ const Onboarding = () => {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="directorDateOfBirth"
@@ -632,7 +665,7 @@ const Onboarding = () => {
                               </FormItem>
                             )}
                           />
-                          
+
                           <FormField
                             control={form.control}
                             name="directorEmail"
@@ -647,7 +680,7 @@ const Onboarding = () => {
                             )}
                           />
                         </div>
-                        
+
                         <FormField
                           control={form.control}
                           name="directorAddress"
@@ -661,17 +694,17 @@ const Onboarding = () => {
                             </FormItem>
                           )}
                         />
-                        
+
                         <div className="flex gap-4 pt-4">
-                          <Button 
-                            type="button" 
+                          <Button
+                            type="button"
                             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800"
                             onClick={() => setCurrentStep(1)}
                           >
                             Previous
                           </Button>
-                          <Button 
-                            type="button" 
+                          <Button
+                            type="button"
                             className="w-full bg-solar-green-600 hover:bg-solar-green-700"
                             onClick={handleNextStep}
                             disabled={!isStep2Complete()}
@@ -681,14 +714,14 @@ const Onboarding = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     {currentStep === 3 && (
                       <div className="space-y-4">
                         <h3 className="text-lg font-semibold mb-4 flex items-center">
                           <FileText className="mr-2 h-5 w-5" />
                           Required Documents (Optional)
                         </h3>
-                        
+
                         <FormField
                           control={form.control}
                           name="cacDocument"
@@ -712,7 +745,7 @@ const Onboarding = () => {
                                     accept=".pdf,.jpg,.jpeg,.png"
                                     {...rest}
                                   />
-                                  <Button 
+                                  <Button
                                     type="button"
                                     variant="outline"
                                     onClick={() => document.getElementById('cacDocument')?.click()}
@@ -730,17 +763,17 @@ const Onboarding = () => {
                             </FormItem>
                           )}
                         />
-                        
+
                         <div className="flex gap-4 pt-4">
-                          <Button 
-                            type="button" 
+                          <Button
+                            type="button"
                             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800"
                             onClick={() => setCurrentStep(2)}
                           >
                             Previous
                           </Button>
-                          <Button 
-                            type="submit" 
+                          <Button
+                            type="submit"
                             className="w-full bg-solar-green-600 hover:bg-solar-green-700"
                             disabled={isSubmitting}
                           >
