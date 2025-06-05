@@ -1,9 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+
 import { 
   CreditCard, 
   TrendingUp, 
@@ -18,9 +21,31 @@ import {
 import CreditLimitCard from '@/components/dashboard/CreditLimitCard';
 import { useToast } from '@/hooks/use-toast';
 
+interface CreditWallet {
+  avaialable_balance: number;
+  credit_balance: number;
+  pending_balance: number;
+  user_id: string;
+}
+
+
+interface Transaction {
+  amount: number;
+  description: number;
+  payment_provider: number;
+  payment_reference: string;
+  status: string;
+  type: string;
+  user_id: string;
+}
+
 const CreditPage = () => {
+  const { user, hasCompletedOnboarding } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
+  const [creditWallet, setCreditWallet] = useState<CreditWallet | null>(null);
+  const [transaction, setTransaction] = useState<Transaction[]>([]);
+
 
   // Mock data for credit information
   const creditData = {
@@ -60,6 +85,45 @@ const CreditPage = () => {
       description: 'Inventory purchase funding'
     }
   ];
+
+
+  const fetchCreditwallet = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('wallets')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      console.log("data------------", data)
+      setCreditWallet(data)
+    } catch (error) {
+      console.error('Error in fetchCreditwallet:', error);
+    }
+  };
+
+  const fetchTransaction = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      console.log("transact------------", data)
+      setTransaction(data)
+
+    } catch (error) {
+      console.error('Error in fetchCreditwallet:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCreditwallet();
+    fetchTransaction();
+  }, [user]);
 
   const handleWithdraw = (amount: number) => {
     console.log('Withdrawing amount:', amount);
@@ -133,11 +197,11 @@ const CreditPage = () => {
                 <div className="space-y-2 pt-4">
                   <div className="flex justify-between">
                     <span className="text-sm">Last Updated:</span>
-                    <span className="text-sm font-medium">Jan 15, 2024</span>
+                    <span className="text-sm font-medium">Jan 15, 2025</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm">Next Update:</span>
-                    <span className="text-sm font-medium">Feb 15, 2024</span>
+                    <span className="text-sm font-medium">Dec 29, 2025</span>
                   </div>
                 </div>
               </CardContent>
@@ -153,6 +217,7 @@ const CreditPage = () => {
                   Last Payment
                 </CardTitle>
               </CardHeader>
+              { transaction.length > 0 ?
               <CardContent>
                 <div className="space-y-2">
                   <div className="text-2xl font-bold">₦500,000</div>
@@ -163,6 +228,18 @@ const CreditPage = () => {
                   </div>
                 </div>
               </CardContent>
+              :
+              <CardContent>
+                <div className="space-y-2">
+                  <div className="text-2xl font-bold">0.00</div>
+                  <div className="text-sm text-gray-500">No Payment was detected!</div>
+                  <div className="flex items-center text-sm text-green-600">
+                    <CheckCircle className="mr-1 h-4 w-4" />
+                    On time payment
+                  </div>
+                </div>
+              </CardContent>
+              }
             </Card>
 
             <Card>
@@ -172,6 +249,7 @@ const CreditPage = () => {
                   Next Payment
                 </CardTitle>
               </CardHeader>
+              { transaction.length > 0 ?
               <CardContent>
                 <div className="space-y-2">
                   <div className="text-2xl font-bold">₦37,500</div>
@@ -182,50 +260,76 @@ const CreditPage = () => {
                   </div>
                 </div>
               </CardContent>
+              :
+              <CardContent>
+              <div className="space-y-2">
+                <div className="text-2xl font-bold">0.00</div>
+                  <div className="text-sm text-gray-500">No Payment was detected!</div>
+                <div className="flex items-center text-sm text-amber-600">
+                  <Calendar className="mr-1 h-4 w-4" />
+                  0 days remaining
+                </div>
+              </div>
+            </CardContent>
+              }
+
             </Card>
           </div>
         </TabsContent>
 
+         {/* transactions */}
         <TabsContent value="history" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Transaction History</CardTitle>
             </CardHeader>
             <CardContent>
+              { transaction.length > 0 ?
               <div className="space-y-4">
-                {creditHistory.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
+                {transaction.map((tx) => (
+                  <div key={tx.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className={`p-2 rounded-full ${
-                        transaction.type === 'repayment' 
+                        tx.type === 'repayment' 
                           ? 'bg-green-100 text-green-600' 
                           : 'bg-blue-100 text-blue-600'
                       }`}>
-                        {transaction.type === 'repayment' ? 
+                        {tx.type === 'repayment' ? 
                           <CheckCircle className="h-4 w-4" /> : 
                           <DollarSign className="h-4 w-4" />
                         }
                       </div>
                       <div>
-                        <p className="font-medium">{transaction.description}</p>
-                        <p className="text-sm text-gray-500">{transaction.date}</p>
+                        <p className="font-medium">{tx.description}</p>
+                        <p className="text-sm text-gray-500">{tx.date}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={`font-bold ${
-                        transaction.type === 'repayment' ? 'text-green-600' : 'text-blue-600'
+                        tx.type === 'repayment' ? 'text-green-600' : 'text-blue-600'
                       }`}>
-                        {transaction.type === 'repayment' ? '+' : '-'}₦{transaction.amount.toLocaleString()}
+                        {tx.type === 'repayment' ? '+' : '-'}₦{tx.amount.toLocaleString()}
                       </p>
-                      <p className="text-sm text-gray-500 capitalize">{transaction.status}</p>
+                      <p className="text-sm text-gray-500 capitalize">{tx.status}</p>
                     </div>
                   </div>
                 ))}
               </div>
+              :
+              <>
+                <div className="text-center space-y-4 mt-5 mb-5">
+                  <h3 className="font-bold">
+                    Empty
+                  </h3>
+                  <p className="">You don't have any transactions at the moment!!</p>
+                </div>
+              </>
+              }
             </CardContent>
           </Card>
         </TabsContent>
 
+         {/* apply */}
         <TabsContent value="application" className="space-y-6">
           <Card>
             <CardHeader>

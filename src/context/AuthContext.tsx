@@ -50,10 +50,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .eq('user_id', session.user.id)
         .single();
       
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Error checking onboarding status:', error);
         return;
       }
+      setHasCompletedOnboarding(true);
     } catch (error) {
       console.error('Error in checkOnboardingStatus:', error);
       setHasCompletedOnboarding(false);
@@ -69,25 +70,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         
         if (session?.user) {
-          try {
-            const userObj = await createUserObject(session.user);
-            setUser(userObj);
-          } catch (error) {
-            console.error('Error creating user object:', error);
-            setUser(null);
-            setHasCompletedOnboarding(false);
-          }
-        } else {
-          console.log('No user found, clearing state');
-          setUser(null);
-          setHasCompletedOnboarding(false);
+          const userObj = await createUserObject(session.user);
+          setUser(userObj);
         }
         
         if (event === 'SIGNED_OUT') {
           console.log('User signed out, clearing state');
           setUser(null);
           setSession(null);
-          setHasCompletedOnboarding(false);
         }
         
         setIsLoading(false);
@@ -110,8 +100,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               .select('status')
               .eq('user_id', session.user.id)
               .single();
-            
-            if (error && error.code !== 'PGRST116') {
+
+            if (error) {
               console.error('Error checking onboarding status:', error);
               setHasCompletedOnboarding(false);
             }

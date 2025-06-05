@@ -80,9 +80,25 @@ export const useAuthOperations = () => {
       if (data.user) {
         if (data.user.email_confirmed_at) {
           toast.success("Registration successful! You are now logged in.");
-          // Navigation will be handled by AuthNavigationHandler
         } else {
-          toast.success("Registration successful! Please check your email for verification.");
+          toast.success("Registration successful! Please check your email for verification.");          
+          // create user roles
+          await supabase.from('wallets').insert({
+            user_id: data.user.id,
+            available_balance: 0,
+            credit_balance: 0,
+            pending_balance: 0,
+          });
+          toast.success("Wallet created successfully");
+
+          // create user roles
+          await supabase.from('user_roles').insert({
+            user_id: data.user.id,
+            role: "user"
+          });
+          toast.success("User role created successfully");
+          toast.success("Redirecting...");
+          
           window.location.href='/verify-email'
         }
       }
