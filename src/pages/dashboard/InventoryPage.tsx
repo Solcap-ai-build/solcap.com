@@ -42,6 +42,12 @@ const InventoryPage = () => {
   const [financingAmount, setFinancingAmount] = useState('');
   const [financingTerm, setFinancingTerm] = useState('30');
   const [supplierName, setSupplierName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [companyEmail, setCompanyEmail] = useState('');
+  const [companyPhone, setCompanyPhone] = useState('');
+  const [companyBankName, setCompanyBankName] = useState('');
+  const [companyBankAcct, setCompanyBankAcct] = useState('');
+  const [companyLocation, setCompanyLocation] = useState('');
   const [invoiceDescription, setInvoiceDescription] = useState('');
   const [inventories, setInventories] = useState<Inventory[]>([]);
   const { user, hasCompletedOnboarding } = useAuth();
@@ -389,6 +395,9 @@ const InventoryPage = () => {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
+                  <h1 className='font-bold font-lg'>Basic Information</h1>
+                  <hr />
+
                   <div>
                     <Label htmlFor="supplier-name">Supplier Name *</Label>
                     <Input
@@ -424,9 +433,7 @@ const InventoryPage = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
 
-                <div className="space-y-4">
                   <div>
                     <Label htmlFor="invoice-description">Invoice Description *</Label>
                     <Textarea
@@ -447,6 +454,76 @@ const InventoryPage = () => {
                       Choose File
                     </Button>
                   </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h1 className='font-bold font-lg'>Company Information</h1>
+                  <hr />
+
+                  <div>
+                    <Label htmlFor="company_name">Company Name *</Label>
+                    <Input
+                      id="company_name"
+                      placeholder="Enter company name"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company_email">Company Email *</Label>
+                    <Input
+                      id="company_email"
+                      placeholder="Enter company email address"
+                      value={companyEmail}
+                      onChange={(e) => setCompanyEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company_phone">Company Phone Number *</Label>
+                    <Input
+                      id="company_phone"
+                      type="number"
+                      placeholder="Enter company phone number"
+                      value={companyPhone}
+                      onChange={(e) => setCompanyPhone(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company_loc">Company Location *</Label>
+                    <Input
+                      id="company_loc"
+                      placeholder="Enter company location"
+                      value={companyLocation}
+                      onChange={(e) => setCompanyLocation(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="bank_name">Company Bank Name *</Label>
+                    <Input
+                      id="bank_name"
+                      placeholder="Enter company bank name"
+                      value={companyBankName}
+                      onChange={(e) => setCompanyBankName(e.target.value)}
+                    />
+                  </div>
+
+
+                  <div>
+                    <Label htmlFor="bank_acct">Company Account Number *</Label>
+                    <Input
+                      id="bank_acct"
+                      type="number"
+                      placeholder="Enter bank account number"
+                      value={companyBankAcct}
+                      onChange={(e) => setCompanyBankAcct(e.target.value)}
+                    />
+                  </div>
+
+
                 </div>
               </div>
 
