@@ -300,6 +300,36 @@ export type Database = {
         }
         Relationships: []
       }
+      customers: {
+        Row: {
+          name: string
+          email: string
+          id: string
+          phone_number: string
+          parent_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          name?: string
+          created_at?: string
+          id?: string
+          email?: string
+          parent_id?: string
+          updated_at?: string
+          phone_number?: string
+        }
+        Update: {
+          name?: string
+          created_at?: string
+          id?: string
+          email?: string
+          parent_id?: string
+          updated_at?: string
+          phone_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
