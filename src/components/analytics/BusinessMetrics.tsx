@@ -14,16 +14,70 @@ interface MetricData {
   icon: React.ReactNode;
 }
 
-const BusinessMetrics = (data) => {
+const BusinessMetrics = () => {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [totalInv, setTotalInv] = useState(0);
+  const [totalCompletedInv, setTotalCompletedInv] = useState(0);
+  const [totalRejectedInv, setTotalRejectedInv] = useState(0);
+  const [totalActiveInv, setTotalActiveInv] = useState(0);
+  const [totalInvAmount, setTotalInvAmount] = useState(0);
+
+  const fetchInventoryMetrics = async () => {
+    if (!user) return;
+
+    // Total count
+    const { count: totalCount } = await supabase
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+
+    setTotalInv(totalCount)
+
+    // Total amount
+    const { data: totalAmountData } = await supabase
+      .from('inventories')
+      .select('amount')
+      .eq('user_id', user.id)
+
+    const totalAmount = totalAmountData?.reduce((sum, inv) => sum + inv.amount, 0) || 0
+    setTotalInvAmount(totalAmount)
+
+    // Count completed
+    const { count: completedCount } = await supabase
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'completed')
+
+    setTotalCompletedInv(completedCount)
+
+    // Count active
+    const { count: activeCount } = await supabase
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+    setTotalActiveInv(activeCount)
+
+    // Count rejected
+    const { count: rejectedCount } = await supabase
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'rejected')
+    setTotalRejectedInv(rejectedCount)
+
+  };
+
   useEffect(() => {
     if (user) {
       fetchMetrics();
+      fetchInventoryMetrics();
     }
-  }, [user]);
+  }, [totalInvAmount, user]);
 
   const fetchMetrics = async () => {
     if (!user) return;
@@ -44,7 +98,7 @@ const BusinessMetrics = (data) => {
       }, 0) || 0;
 
       // Placeholder values for now
-      const inventoryValue = data.totalInvAmount; // Placeholder
+      const inventoryValue = totalInvAmount; // Placeholder
       const pendingLoans = 0; // Placeholder
       const approvedLoans = 0; // Placeholder
 
