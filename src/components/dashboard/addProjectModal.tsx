@@ -36,7 +36,7 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
         try {
             const { data, error } = await supabase.from('projects').insert({
-                user: user.id,
+                owner_id: user.id,
                 name,
                 description,
                 status: "active",
@@ -51,8 +51,8 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             }
 
             toast({
-                title: "Project Added",
-                description: `Project has been added successfully!!`,
+                title: "Project Created",
+                description: `Project created successfully!!`,
             });
 
             setName('');
@@ -104,7 +104,7 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                         className="bg-solar-green-600 hover:bg-solar-green-700"
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Adding...' : 'Add Project'}
+                        {isLoading ? 'Adding...' : 'Create Project'}
                     </Button>
                 </div>
             </div>

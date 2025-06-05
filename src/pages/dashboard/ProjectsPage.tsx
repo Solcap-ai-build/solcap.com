@@ -18,7 +18,7 @@ const ProjectsPage = () => {
         <h1 className="text-2xl font-bold flex items-center">
           <FolderKanban className="mr-2 h-6 w-6" /> Projects
         </h1>
-        <Button onClick={(e) => setModalOpen(true)} className='bg-solar-green-600 hover:bg-solar-green-700'>Add Team Member</Button>
+        <Button onClick={(e) => setModalOpen(true)} className='bg-solar-green-600 hover:bg-solar-green-700'>Create Project</Button>
       </div>
 
       <Modal
