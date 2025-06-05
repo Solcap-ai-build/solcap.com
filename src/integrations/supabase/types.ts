@@ -261,6 +261,45 @@ export type Database = {
         }
         Relationships: []
       }
+      inventories: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          supplier_name: string
+          description: string
+          term: string
+          updated_at: string
+          user_id: string
+          status: string
+          invoice_number: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          supplier_name?: string
+          description?: string
+          term?: string
+          updated_at?: string
+          user_id?: string
+          status?: string
+          invoice_number?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          supplier_name?: string
+          description?: string
+          term?: string
+          updated_at?: string
+          user_id?: string
+          status?: string
+          invoice_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

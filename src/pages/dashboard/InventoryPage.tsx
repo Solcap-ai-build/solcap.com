@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,21 @@ import {
   DollarSign
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Inventory {
+  amount: number
+  created_at: string
+  id: string
+  supplier_name: string
+  description: string
+  term: string
+  updated_at: string
+  user_id: string
+  status: string
+  invoice_number: string
+}
 
 const InventoryPage = () => {
   const { toast } = useToast();
@@ -28,12 +43,16 @@ const InventoryPage = () => {
   const [financingTerm, setFinancingTerm] = useState('30');
   const [supplierName, setSupplierName] = useState('');
   const [invoiceDescription, setInvoiceDescription] = useState('');
+  const [inventories, setInventories] = useState<Inventory[]>([]);
+  const { user, hasCompletedOnboarding } = useAuth();
+  const [totalInv, setTotalInv] = useState(0);
+  const [totalCompletedInv, setTotalCompletedInv] = useState(0);
+  const [totalRejectedInv, setTotalRejectedInv] = useState(0);
+  const [totalActiveInv, setTotalActiveInv] = useState(0);
+  const [totalInvAmount, setTotalInvAmount] = useState(0);
 
   // Mock data for inventory financing
   const inventoryStats = {
-    totalFinanced: 15000000,
-    activeRequests: 3,
-    completedFinancing: 12,
     averageProcessingTime: '24 hours'
   };
 
@@ -118,6 +137,75 @@ const InventoryPage = () => {
     }
   };
 
+  const fetchInventories = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+      .from('inventories')
+      .select('*')
+      .eq('user_id', user.id)
+      console.log("inventories------------", data)
+      setInventories(data)
+
+    } catch (error) {
+      console.error('Error in fetchInventories:', error);
+    }
+  };
+
+
+  const fetchInventoryMetrics = async () => {
+    if (!user) return;
+
+    // Total count
+    const { count: totalCount } = await supabase
+    .from('inventories')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+    setTotalInv(totalCount)
+
+    // Total amount
+    const { data: totalAmountData } = await supabase
+    .from('inventories')
+    .select('amount')
+    .eq('user_id', user.id)
+
+    const totalAmount = totalAmountData?.reduce((sum, inv) => sum + inv.amount, 0) || 0
+    setTotalInvAmount(totalAmount)
+
+    // Count completed
+    const { count: completedCount } = await supabase
+    .from('inventories')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('status', 'completed')
+    
+    setTotalCompletedInv(completedCount)
+
+    // Count active
+    const { count: activeCount } = await supabase
+    .from('inventories')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    setTotalActiveInv(activeCount)
+
+    // Count rejected
+    const { count: rejectedCount } = await supabase
+    .from('inventories')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('status', 'rejected')
+    setTotalRejectedInv(rejectedCount)
+
+  };
+
+  useEffect(() => {
+    fetchInventoryMetrics();
+    fetchInventories();
+  }, [user]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -148,7 +236,7 @@ const InventoryPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Total Financed</p>
-                    <p className="text-2xl font-bold">₦{inventoryStats.totalFinanced.toLocaleString()}</p>
+                    <p className="text-2xl font-bold">₦{totalInvAmount.toLocaleString()}</p>
                   </div>
                   <DollarSign className="h-8 w-8 text-solar-green-600" />
                 </div>
@@ -160,7 +248,7 @@ const InventoryPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Active Requests</p>
-                    <p className="text-2xl font-bold">{inventoryStats.activeRequests}</p>
+                    <p className="text-2xl font-bold">{totalActiveInv}</p>
                   </div>
                   <Clock className="h-8 w-8 text-yellow-600" />
                 </div>
@@ -172,7 +260,7 @@ const InventoryPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Completed</p>
-                    <p className="text-2xl font-bold">{inventoryStats.completedFinancing}</p>
+                    <p className="text-2xl font-bold">{totalCompletedInv}</p>
                   </div>
                   <CheckCircle className="h-8 w-8 text-green-600" />
                 </div>
@@ -198,16 +286,17 @@ const InventoryPage = () => {
               <CardTitle>Recent Financing Requests</CardTitle>
             </CardHeader>
             <CardContent>
+              {inventories.length > 0 ? 
               <div className="space-y-4">
-                {financingRequests.slice(0, 3).map((request) => (
+                {inventories.slice(0, 3).map((request) => (
                   <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-solar-green-100 rounded-full">
                         <Package className="h-4 w-4 text-solar-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium">{request.supplierName}</p>
-                        <p className="text-sm text-gray-500">{request.invoiceNumber}</p>
+                        <p className="font-medium">{request.supplier_name}</p>
+                        <p className="text-sm text-gray-500">{request.invoice_number}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -223,6 +312,16 @@ const InventoryPage = () => {
                   </div>
                 ))}
               </div>
+              : 
+              <>
+              <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
+                  <h3 className="font-bold">
+                    Empty
+                  </h3>
+                  <p className="">You don't have any finance at the moment!!</p>
+                </div>
+              </>
+              }
             </CardContent>
           </Card>
         </TabsContent>
@@ -233,8 +332,9 @@ const InventoryPage = () => {
               <CardTitle>All Financing Requests</CardTitle>
             </CardHeader>
             <CardContent>
+            {inventories.length > 0 ? 
               <div className="space-y-4">
-                {financingRequests.map((request) => (
+                {inventories.map((request) => (
                   <div key={request.id} className="p-6 border rounded-lg space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
@@ -242,8 +342,8 @@ const InventoryPage = () => {
                           <Package className="h-5 w-5 text-solar-green-600" />
                         </div>
                         <div>
-                          <h3 className="font-semibold">{request.supplierName}</h3>
-                          <p className="text-sm text-gray-500">Invoice: {request.invoiceNumber}</p>
+                          <h3 className="font-semibold">{request.supplier_name}</h3>
+                          <p className="text-sm text-gray-500">Invoice: {request.invoice_number}</p>
                         </div>
                       </div>
                       <div className={`flex items-center space-x-1 px-3 py-1 rounded-full border ${getStatusColor(request.status)}`}>
@@ -263,17 +363,27 @@ const InventoryPage = () => {
                       </div>
                       <div>
                         <p className="text-gray-500">Request Date</p>
-                        <p className="font-medium">{request.requestDate}</p>
+                        <p className="font-medium">{request.created_at}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Due Date</p>
-                        <p className="font-medium">{request.dueDate}</p>
+                        <p className="font-medium">{request.created_at}</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardContent>
+              : 
+              <>
+              <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
+                  <h3 className="font-bold">
+                    Empty
+                  </h3>
+                  <p className="">You don't have any finance at the moment!!</p>
+                </div>
+              </>
+              }
+          </CardContent>
           </Card>
         </TabsContent>
 
