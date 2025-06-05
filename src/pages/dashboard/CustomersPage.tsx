@@ -25,7 +25,7 @@ const CustomersPage = () => {
   const { user, hasCompletedOnboarding } = useAuth();
   const [customers, setCustomers] = useState<Customer[]>([]);
 
-  const fetchInventories = async () => {
+  const fetchCustomer = async () => {
     if (!user) return;
 
     try {
@@ -37,12 +37,12 @@ const CustomersPage = () => {
       setCustomers(data)
 
     } catch (error) {
-      console.error('Error in fetchInventories:', error);
+      console.error('Error in fetchCustomer:', error);
     }
   };
 
   useEffect(() => {
-    fetchInventories();
+    fetchCustomer();
   }, [customers, user]);
 
   return (
