@@ -14,7 +14,7 @@ interface MetricData {
   icon: React.ReactNode;
 }
 
-const BusinessMetrics = () => {
+const BusinessMetrics = (data) => {
   const { user } = useAuth();
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,9 +44,9 @@ const BusinessMetrics = () => {
       }, 0) || 0;
 
       // Placeholder values for now
-      const inventoryValue = 150000; // Placeholder
-      const pendingLoans = 2; // Placeholder
-      const approvedLoans = 1; // Placeholder
+      const inventoryValue = data.totalInvAmount; // Placeholder
+      const pendingLoans = 0; // Placeholder
+      const approvedLoans = 0; // Placeholder
 
       const metricsData: MetricData[] = [
         {
