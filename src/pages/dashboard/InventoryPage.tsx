@@ -457,63 +457,85 @@ const InventoryPage = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <h1 className='font-bold font-lg'>Company Information</h1>
+                  <h1 className='font-bold font-lg'>Supplier's Company Information</h1>
                   <hr />
 
                   <div>
-                    <Label htmlFor="company_name">Company Name *</Label>
+                    <Label htmlFor="company_name">Name *</Label>
                     <Input
                       id="company_name"
-                      placeholder="Enter company name"
+                      placeholder="Enter name"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="company_email">Company Email *</Label>
+                    <Label htmlFor="company_email">Email *</Label>
                     <Input
                       id="company_email"
-                      placeholder="Enter company email address"
+                      placeholder="Enter email address"
                       value={companyEmail}
                       onChange={(e) => setCompanyEmail(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="company_phone">Company Phone Number *</Label>
+                    <Label htmlFor="company_phone">Phone Number *</Label>
                     <Input
                       id="company_phone"
                       type="number"
-                      placeholder="Enter company phone number"
+                      placeholder="Enter phone number"
                       value={companyPhone}
                       onChange={(e) => setCompanyPhone(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="company_loc">Company Location *</Label>
+                    <Label htmlFor="company_loc">Location *</Label>
                     <Input
                       id="company_loc"
-                      placeholder="Enter company location"
+                      placeholder="Enter location"
                       value={companyLocation}
                       onChange={(e) => setCompanyLocation(e.target.value)}
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="bank_name">Company Bank Name *</Label>
-                    <Input
-                      id="bank_name"
-                      placeholder="Enter company bank name"
-                      value={companyBankName}
-                      onChange={(e) => setCompanyBankName(e.target.value)}
-                    />
+
+                  <div className="mb-5">
+                    <Label htmlFor="bank_name">Bank Name *</Label>
+                    <Select value={companyBankName} onValueChange={setCompanyBankName}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Bank Name" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Access Bank">Access Bank</SelectItem>
+                        <SelectItem value="Citibank">Citibank</SelectItem>
+                        <SelectItem value="Ecobank">Ecobank</SelectItem>
+                        <SelectItem value="Fidelity Bank">Fidelity Bank</SelectItem>
+                        <SelectItem value="First Bank">First Bank</SelectItem>
+                        <SelectItem value="First City Monument Bank">First City Monument Bank (FCMB)</SelectItem>
+                        <SelectItem value="Globus Bank">Globus Bank</SelectItem>
+                        <SelectItem value="Guaranty Trust Bank">Guaranty Trust Bank (GTBank)</SelectItem>
+                        <SelectItem value="Heritage Bank">Heritage Bank</SelectItem>
+                        <SelectItem value="Keystone Bank">Keystone Bank</SelectItem>
+                        <SelectItem value="Polaris Bank">Polaris Bank</SelectItem>
+                        <SelectItem value="Providus Bank">Providus Bank</SelectItem>
+                        <SelectItem value="Stanbic IBTC Bank">Stanbic IBTC Bank</SelectItem>
+                        <SelectItem value="Standard Chartered Bank">Standard Chartered Bank</SelectItem>
+                        <SelectItem value="Sterling Bank">Sterling Bank</SelectItem>
+                        <SelectItem value="SunTrust Bank">SunTrust Bank</SelectItem>
+                        <SelectItem value="Union Bank">Union Bank</SelectItem>
+                        <SelectItem value="United Bank for Africa">United Bank for Africa (UBA)</SelectItem>
+                        <SelectItem value="Unity Bank">Unity Bank</SelectItem>
+                        <SelectItem value="Wema Bank">Wema Bank</SelectItem>
+                        <SelectItem value="Zenith Bank">Zenith Bank</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-
                   <div>
-                    <Label htmlFor="bank_acct">Company Account Number *</Label>
+                    <Label htmlFor="bank_acct">Account Number *</Label>
                     <Input
                       id="bank_acct"
                       type="number"

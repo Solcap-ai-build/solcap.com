@@ -330,6 +330,36 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          name: string
+          description: string
+          id: string
+          status: string
+          owner_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          name?: string
+          created_at?: string
+          id?: string
+          description?: string
+          owner_id?: string
+          updated_at?: string
+          status?: string
+        }
+        Update: {
+          name?: string
+          created_at?: string
+          id?: string
+          description?: string
+          owner_id?: string
+          updated_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
