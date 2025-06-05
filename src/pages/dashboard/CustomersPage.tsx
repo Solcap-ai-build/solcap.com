@@ -7,6 +7,8 @@ import Modal from '@/components/dashboard/AddCustomersModal';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Trash } from "lucide-react";
+import { useToast } from '@/hooks/use-toast';
 
 
 interface Customer {
@@ -20,6 +22,7 @@ interface Customer {
 }
 
 const CustomersPage = () => {
+  const { toast } = useToast();
   const [isModalOpen, setModalOpen] = useState(false);
   const handleClose = () => setModalOpen(false);
   const { user, hasCompletedOnboarding } = useAuth();
@@ -40,6 +43,30 @@ const CustomersPage = () => {
       console.error('Error in fetchCustomer:', error);
     }
   };
+
+  const handleDeleteCustomer = async (id) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+      .from('customers')
+      .delete()
+      .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting customer:', error.message);
+      }
+
+      toast({
+        title: "Customer Deleted",
+        description: `Customer has been deleted successfully!!`,
+    });
+
+    } catch (error) {
+      console.error('Error in deleting customer:', error);
+    }
+
+  }
 
   useEffect(() => {
     fetchCustomer();
@@ -67,9 +94,19 @@ const CustomersPage = () => {
           {customers.length > 0
 
             ? <>
+
               <div className="space-y-4">
                 {customers.map((customer) => (
-                  <div key={customer.id} className="p-6 border rounded-lg space-y-4">
+                  <div key={customer.id} className="p-6 border rounded-lg space-y-4 relative">
+
+                    {/* Delete Icon Button */}
+                    <button
+                      onClick={() => handleDeleteCustomer(customer.id)}
+                      className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+                      title="Delete customer"
+                    >
+                      <Trash size={18} />
+                    </button>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                       <div>
@@ -97,11 +134,11 @@ const CustomersPage = () => {
                           })}
                         </p>
                       </div>
-
                     </div>
                   </div>
                 ))}
               </div>
+
             </>
             : <CustomersEmpty onAddCustomer={() => setModalOpen(true)} />
           }
