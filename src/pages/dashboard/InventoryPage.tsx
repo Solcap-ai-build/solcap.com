@@ -71,10 +71,12 @@ const InventoryPage = () => {
       description: `Your request for ₦${parseInt(financingAmount).toLocaleString()} has been submitted for review`,
     });
 
+    const invoice_number = Math.floor(10000000 + Math.random() * 90000000)
+
     await supabase.from('inventories').insert({
       user_id: user.id,
       supplier_name: supplierName,
-      invoice_number: "supplierName",
+      invoice_number: `INV-${invoice_number}${financingTerm}-${supplierName.toUpperCase()}`,
       description: invoiceDescription,
       amount: financingAmount,
       term: financingTerm,
