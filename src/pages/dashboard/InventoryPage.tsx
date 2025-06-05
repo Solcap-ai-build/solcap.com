@@ -7,12 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Package, 
-  Upload, 
-  FileText, 
-  Clock, 
-  CheckCircle, 
+import {
+  Package,
+  Upload,
+  FileText,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Plus,
   TrendingUp,
@@ -56,40 +56,7 @@ const InventoryPage = () => {
     averageProcessingTime: '24 hours'
   };
 
-  const financingRequests = [
-    {
-      id: 1,
-      supplierName: 'Solar Tech Supplies',
-      amount: 3500000,
-      term: '60 days',
-      status: 'approved',
-      requestDate: '2024-01-20',
-      dueDate: '2024-03-20',
-      invoiceNumber: 'INV-2024-001'
-    },
-    {
-      id: 2,
-      supplierName: 'Green Energy Components',
-      amount: 2200000,
-      term: '45 days',
-      status: 'processing',
-      requestDate: '2024-01-18',
-      dueDate: '2024-03-04',
-      invoiceNumber: 'INV-2024-002'
-    },
-    {
-      id: 3,
-      supplierName: 'Renewable Parts Ltd',
-      amount: 1800000,
-      term: '30 days',
-      status: 'pending',
-      requestDate: '2024-01-15',
-      dueDate: '2024-02-14',
-      invoiceNumber: 'INV-2024-003'
-    }
-  ];
-
-  const handleSubmitRequest = () => {
+  const handleSubmitRequest = async () => {
     if (!financingAmount || !supplierName || !invoiceDescription) {
       toast({
         title: "Missing information",
@@ -102,6 +69,16 @@ const InventoryPage = () => {
     toast({
       title: "Financing request submitted",
       description: `Your request for ₦${parseInt(financingAmount).toLocaleString()} has been submitted for review`,
+    });
+
+    await supabase.from('inventories').insert({
+      user_id: user.id,
+      supplier_name: supplierName,
+      invoice_number: "supplierName",
+      description: invoiceDescription,
+      amount: financingAmount,
+      term: financingTerm,
+      status: "active",
     });
 
     // Reset form
@@ -142,10 +119,9 @@ const InventoryPage = () => {
 
     try {
       const { data, error } = await supabase
-      .from('inventories')
-      .select('*')
-      .eq('user_id', user.id)
-      console.log("inventories------------", data)
+        .from('inventories')
+        .select('*')
+        .eq('user_id', user.id)
       setInventories(data)
 
     } catch (error) {
@@ -159,44 +135,44 @@ const InventoryPage = () => {
 
     // Total count
     const { count: totalCount } = await supabase
-    .from('inventories')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
 
     setTotalInv(totalCount)
 
     // Total amount
     const { data: totalAmountData } = await supabase
-    .from('inventories')
-    .select('amount')
-    .eq('user_id', user.id)
+      .from('inventories')
+      .select('amount')
+      .eq('user_id', user.id)
 
     const totalAmount = totalAmountData?.reduce((sum, inv) => sum + inv.amount, 0) || 0
     setTotalInvAmount(totalAmount)
 
     // Count completed
     const { count: completedCount } = await supabase
-    .from('inventories')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('status', 'completed')
-    
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'completed')
+
     setTotalCompletedInv(completedCount)
 
     // Count active
     const { count: activeCount } = await supabase
-    .from('inventories')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('status', 'active')
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'active')
     setTotalActiveInv(activeCount)
 
     // Count rejected
     const { count: rejectedCount } = await supabase
-    .from('inventories')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('status', 'rejected')
+      .from('inventories')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('status', 'rejected')
     setTotalRejectedInv(rejectedCount)
 
   };
@@ -204,7 +180,7 @@ const InventoryPage = () => {
   useEffect(() => {
     fetchInventoryMetrics();
     fetchInventories();
-  }, [user]);
+  }, [inventories, user]);
 
   return (
     <div className="space-y-6">
@@ -212,7 +188,7 @@ const InventoryPage = () => {
         <h1 className="text-2xl font-bold flex items-center">
           <Package className="mr-2 h-6 w-6" /> Inventory Finance
         </h1>
-        <Button 
+        <Button
           onClick={() => setActiveTab('request')}
           className="bg-solar-green-600 hover:bg-solar-green-700"
         >
@@ -228,6 +204,7 @@ const InventoryPage = () => {
           <TabsTrigger value="request">New Request</TabsTrigger>
         </TabsList>
 
+        {/* finance metrcis */}
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -286,107 +263,122 @@ const InventoryPage = () => {
               <CardTitle>Recent Financing Requests</CardTitle>
             </CardHeader>
             <CardContent>
-              {inventories.length > 0 ? 
-              <div className="space-y-4">
-                {inventories.slice(0, 3).map((request) => (
-                  <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-solar-green-100 rounded-full">
-                        <Package className="h-4 w-4 text-solar-green-600" />
+              {inventories.length > 0 ?
+                <div className="space-y-4">
+                  {inventories.slice(-3).map((request) => (
+                    <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-solar-green-100 rounded-full">
+                          <Package className="h-4 w-4 text-solar-green-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{request.supplier_name}</p>
+                          <p className="text-sm text-gray-500">{request.invoice_number}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{request.supplier_name}</p>
-                        <p className="text-sm text-gray-500">{request.invoice_number}</p>
+                      <div className="flex items-center space-x-4">
+                        <div className="text-right">
+                          <p className="font-bold">₦{request.amount.toLocaleString()}</p>
+                          <p className="text-sm text-gray-500">{request.term} Days</p>
+                        </div>
+                        <div className={`flex items-center space-x-1 px-2 py-1 rounded-full border text-xs ${getStatusColor(request.status)}`}>
+                          {getStatusIcon(request.status)}
+                          <span className="capitalize">{request.status}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <p className="font-bold">₦{request.amount.toLocaleString()}</p>
-                        <p className="text-sm text-gray-500">{request.term}</p>
-                      </div>
-                      <div className={`flex items-center space-x-1 px-2 py-1 rounded-full border text-xs ${getStatusColor(request.status)}`}>
-                        {getStatusIcon(request.status)}
-                        <span className="capitalize">{request.status}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              : 
-              <>
-              <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
-                  <h3 className="font-bold">
-                    Empty
-                  </h3>
-                  <p className="">You don't have any finance at the moment!!</p>
+                  ))}
                 </div>
-              </>
+                :
+                <>
+                  <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
+                    <h3 className="font-bold">
+                      Empty
+                    </h3>
+                    <p className="">You don't have any finance at the moment!!</p>
+                  </div>
+                </>
               }
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* finance history*/}
         <TabsContent value="requests" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>All Financing Requests</CardTitle>
             </CardHeader>
             <CardContent>
-            {inventories.length > 0 ? 
-              <div className="space-y-4">
-                {inventories.map((request) => (
-                  <div key={request.id} className="p-6 border rounded-lg space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-solar-green-100 rounded-full">
-                          <Package className="h-5 w-5 text-solar-green-600" />
+              {inventories.length > 0 ?
+                <div className="space-y-4">
+                  {inventories.map((request) => (
+                    <div key={request.id} className="p-6 border rounded-lg space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-solar-green-100 rounded-full">
+                            <Package className="h-5 w-5 text-solar-green-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">{request.supplier_name}</h3>
+                            <p className="text-sm text-gray-500">Invoice: {request.invoice_number}</p>
+                          </div>
+                        </div>
+                        <div className={`flex items-center space-x-1 px-3 py-1 rounded-full border ${getStatusColor(request.status)}`}>
+                          {getStatusIcon(request.status)}
+                          <span className="capitalize font-medium">{request.status}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-gray-500">Amount</p>
+                          <p className="font-bold text-lg">₦{request.amount.toLocaleString()}</p>
                         </div>
                         <div>
-                          <h3 className="font-semibold">{request.supplier_name}</h3>
-                          <p className="text-sm text-gray-500">Invoice: {request.invoice_number}</p>
+                          <p className="text-gray-500">Term</p>
+                          <p className="font-medium">{request.term} Days</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Request Date</p>
+                          <p className="font-medium">
+                            {new Date(request.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-gray-500">Due Date</p>
+                          <p className="font-medium">
+                            {new Date(new Date(request.created_at).getTime() + request.term * 24 * 60 * 60 * 1000)
+                              .toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                          </p>
                         </div>
                       </div>
-                      <div className={`flex items-center space-x-1 px-3 py-1 rounded-full border ${getStatusColor(request.status)}`}>
-                        {getStatusIcon(request.status)}
-                        <span className="capitalize font-medium">{request.status}</span>
-                      </div>
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-500">Amount</p>
-                        <p className="font-bold text-lg">₦{request.amount.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Term</p>
-                        <p className="font-medium">{request.term}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Request Date</p>
-                        <p className="font-medium">{request.created_at}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Due Date</p>
-                        <p className="font-medium">{request.created_at}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              : 
-              <>
-              <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
-                  <h3 className="font-bold">
-                    Empty
-                  </h3>
-                  <p className="">You don't have any finance at the moment!!</p>
+                  ))}
                 </div>
-              </>
+                :
+                <>
+                  <div className="text-center space-y-4 mt-10 mb-10 pt-10 pb-10">
+                    <h3 className="font-bold">
+                      Empty
+                    </h3>
+                    <p className="">You don't have any finance at the moment!!</p>
+                  </div>
+                </>
               }
-          </CardContent>
+            </CardContent>
           </Card>
         </TabsContent>
 
+        {/* request finance */}
         <TabsContent value="request" className="space-y-6">
           <Card>
             <CardHeader>
@@ -477,7 +469,7 @@ const InventoryPage = () => {
               )}
 
               <div className="flex space-x-4">
-                <Button 
+                <Button
                   onClick={handleSubmitRequest}
                   className="bg-solar-green-600 hover:bg-solar-green-700"
                   disabled={!financingAmount || !supplierName || !invoiceDescription}
