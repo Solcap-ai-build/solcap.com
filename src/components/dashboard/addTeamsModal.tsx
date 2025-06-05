@@ -40,7 +40,7 @@ const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             title: "Failed",
             description: `Fail to add team member!!`,
         });
-        
+
         setIsLoading(false);
 
         return 
@@ -81,7 +81,7 @@ const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow-md w-[500px]">
+            <div className="bg-white p-6 rounded shadow-md w-[380px]">
                 <h1 className="font-bold mb-5 text-lg">Add Team Member</h1>
 
                 <div className="mb-5">
