@@ -19,6 +19,28 @@ import { supabase } from '@/integrations/supabase/client';
 const DashboardHome = () => {
   const { user } = useAuth();
 
+  const checkOnboardingStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('business_onboarding')
+        .select('status')
+        .eq('user_id', user.id)
+        .single();
+
+        if (!data){
+          console.log("error------------", error)
+          window.location.href = "/onboarding"
+        }
+
+    } catch (error) {
+      console.error('Error in checkOnboardingStatus:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkOnboardingStatus();
+  }, [user]);
+
   const recentActivities = [
     {
       id: 1,
