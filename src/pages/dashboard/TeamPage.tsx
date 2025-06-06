@@ -96,12 +96,6 @@ const TeamPage = () => {
 
   }
 
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   fetchProject();
-  // }, [user]);
-
   useEffect(() => {
     fetchTeams();
     fetchProject();
