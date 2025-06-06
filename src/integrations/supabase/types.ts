@@ -360,6 +360,42 @@ export type Database = {
         }
         Relationships: []
       }
+      teams: {
+        Row: {
+          name: string
+          email: string
+          id: string
+          phone_number: string
+          parent_id: string
+          project_id: string
+          position: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          name?: string
+          created_at?: string
+          id?: string
+          email?: string
+          parent_id?: string
+          updated_at?: string
+          project_id?: string
+          phone_number?: string
+          position?: string
+        }
+        Update: {
+          name?: string
+          created_at?: string
+          id?: string
+          email?: string
+          parent_id?: string
+          updated_at?: string
+          project_id?: string
+          phone_number?: string
+          position?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

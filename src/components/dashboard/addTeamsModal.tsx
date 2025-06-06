@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,53 +7,57 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+interface Project {
+    created_at: string
+    id: string
+    name: string
+    status: string
+    description: string
+    updated_at: string
+    owner_id: string
+}
+
 interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
+    projects: Project[];
 }
 
-const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose, projects }) => {
     const { toast } = useToast();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [position, setPosition] = useState('');
-    const [project, setProject] = useState('');
+    const [projectVal, setProjectVal] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { user, hasCompletedOnboarding } = useAuth();
 
     if (!isOpen) return null;
 
     const handleSubmit = async () => {
-        if (!name || !email || !phone || !position) {
+        if (!name || !email || !phone) {
             toast({
-              title: "Missing information",
-              description: "Please fill in all required fields",
-              variant: "destructive"
+                title: "Missing information",
+                description: "Please fill in all required fields",
+                variant: "destructive"
             });
             return;
         }
 
         setIsLoading(true);
 
-        toast({
-            title: "Failed",
-            description: `Fail to add team member!!`,
-        });
-
-        setIsLoading(false);
-
-        return 
-
         try {
-            const {data, error} = await supabase.from('customers').insert({
+            const { data, error } = await supabase.from('teams').insert({
                 parent_id: user.id,
                 name: name,
                 email: email,
                 phone_number: phone,
+                position: position,
+                project_id: projectVal,
             });
 
-            if (error){
+            if (error) {
                 toast({
                     title: "Failed",
                     description: error.message,
@@ -98,7 +102,7 @@ const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <Label htmlFor="member-email">Email Address *</Label>
                     <Input
                         id="member-email"
-                        type="email" 
+                        type="email"
                         placeholder="Enter Team Member email address"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -121,7 +125,6 @@ const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <Input
                         id="member-postion"
                         placeholder="Enter team member position"
-                        type="number"
                         value={position}
                         onChange={(e) => setPosition(e.target.value)}
                     />
@@ -129,12 +132,15 @@ const AddTeamsModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="mb-10 pb-10">
                     <Label htmlFor="financing-term">Select Project *</Label>
-                    <Select value={project} onValueChange={setProject}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select project" />
-                      </SelectTrigger>
-                      <SelectContent>
-                      </SelectContent>
+                    <Select value={projectVal} onValueChange={setProjectVal}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select project" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {projects.map((project) => (
+                                <SelectItem value={project.id}>{project.name}</SelectItem>
+                            ))}
+                        </SelectContent>
                     </Select>
                 </div>
 
