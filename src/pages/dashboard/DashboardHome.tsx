@@ -29,7 +29,7 @@ const DashboardHome = () => {
 
         if (!data){
           console.log("error------------", error)
-          window.location.href = "/onboarding"
+          // window.location.href = "/onboarding"
         }
 
     } catch (error) {
