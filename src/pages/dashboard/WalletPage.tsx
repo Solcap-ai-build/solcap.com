@@ -5,6 +5,9 @@ import { Wallet } from 'lucide-react';
 import { WalletEmpty } from '@/components/empty-states';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import axios from 'axios';
+
+const PAYSTACK_SECRET = ""
 
 interface CreditWallet {
   avaialable_balance: number;
@@ -40,6 +43,57 @@ const WalletPage = () => {
     fetchCreditwallet();
   }, [user]);
 
+  async function createCustomer(email: string) {
+    const response = await axios.post(
+      'https://api.paystack.co/customer',
+      {
+        email,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${PAYSTACK_SECRET}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log("response----------------", response)
+    await createDedicatedAccount(response.data.data.id)
+  
+    return response.data.data.id;
+  }
+
+
+  async function createDedicatedAccount(customerId: string) {
+    const response = await axios.post(
+      'https://api.paystack.co/dedicated_account',
+      {
+        customer: customerId,
+        preferred_bank: 'wema-bank',
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${PAYSTACK_SECRET}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  
+    console.log("response----------------", response)
+    return response.data;
+  }
+
+  async function getBalance() {
+    const response = await axios.get('https://api.paystack.co/balance', {
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET}`,
+      },
+    });
+  
+    return response.data.data; // array of balances for different currencies
+  }
+  
+
 
   return (
     <div className="space-y-6">
@@ -54,7 +108,7 @@ const WalletPage = () => {
           <CardTitle>Wallet Balance</CardTitle>
         </CardHeader>
         <CardContent>
-          <WalletEmpty onAddFunds={() => console.log('Adding funds...')} />
+          <WalletEmpty onAddFunds={() => createCustomer("ganiyjamiu5@gmail.com")} />
         </CardContent>
       </Card>
     </div>
