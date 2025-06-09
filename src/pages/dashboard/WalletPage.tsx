@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
 import { Trash } from "lucide-react";
 import AddFundsModal from '@/components/dashboard/AddFundsDialog';
+import WalletTransferDialog from '@/components/dashboard/WalletTransferDialog';
 
 
 const PAYSTACK_SECRET = ""
@@ -144,14 +145,16 @@ const WalletPage = () => {
             <div className="flex border-t pt-2 mt-5 overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4 items-start justify-between">
               <div className="">
                 <AddFundsModal
-                  isOpen={isModalOpen}
                   onClose={handleClose}
                 />
               </div>
               <div className="">
-                <button className="mt-3 px-4 py-2 border border-solar-green-400 bg-solar-green-500 text-white rounded-md hover:bg-solar-green-600 transition">
+                {/* <button className="mt-3 px-4 py-2 border border-solar-green-400 bg-solar-green-500 text-white rounded-md hover:bg-solar-green-600 transition">
                   Transfer Funds
-                </button>
+                </button> */}
+                <WalletTransferDialog
+                  onClose={handleClose}
+                />
               </div>
             </div>
 
