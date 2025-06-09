@@ -28,11 +28,8 @@ interface ModalProps {
 
 const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) => {
     const { toast } = useToast();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
     const [due, setDue] = useState('');
     const [period, setPeriod] = useState('');
-    const [position, setPosition] = useState('');
     const [customer, setCustomer] = useState('');
     const [amount, setAmount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -71,13 +68,15 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
             }
 
             toast({
-                title: "Customer Added",
-                description: `Customer has been added successfully!!`,
+                title: "Invoice Created",
+                description: `Invoice has been Created successfully!!`,
             });
 
-            setName('');
-            setEmail('');
-            setPhone('');
+            setCustomer('');
+            setPeriod('');
+            setDue('');
+            setDescription('');
+            setAmount("")
             onClose();
         } catch (error) {
             console.error('Submit error:', error);
@@ -109,7 +108,7 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
                 </div>
 
                 <div className="mb-5">
-                    <Label htmlFor="amount">Amount () *</Label>
+                    <Label htmlFor="amount">Amount (₦) *</Label>
                     <Input
                         id="amount"
                         placeholder="eg. 5000000"
@@ -157,7 +156,7 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
 
 
                 <div className="mb-10 ">
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">Description (optional)</Label>
                     <Textarea
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter invoice descrition"
