@@ -17,13 +17,17 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const { toast } = useToast();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [client, setClient] = useState('');
+    const [start, setStart] = useState('');
+    const [end, setEnd] = useState('');
+    const [teams, setTeams] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { user, hasCompletedOnboarding } = useAuth();
 
     if (!isOpen) return null;
 
     const handleSubmit = async () => {
-        if (!name) {
+        if (!name || !client || !start || !end) {
             toast({
                 title: "Missing information",
                 description: "Please fill in all required fields",
@@ -38,8 +42,11 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             const { data, error } = await supabase.from('projects').insert({
                 owner_id: user.id,
                 name,
+                client,
+                start,
+                end,
                 description,
-                status: "active",
+                status: "pending",
             });
 
             if (error) {
@@ -76,9 +83,41 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <Label htmlFor="member-name">Project Name *</Label>
                     <Input
                         id="member-name"
-                        placeholder="Enter team member name"
+                        placeholder="Enter project name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <Label htmlFor="client-name">Client *</Label>
+                    <Input
+                        id="client-name"
+                        placeholder="Enter client name"
+                        value={client}
+                        onChange={(e) => setClient(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <Label htmlFor="start_dt">Start Date *</Label>
+                    <Input
+                        id="start_dt"
+                        placeholder="Select start date"
+                        type="date"
+                        value={start}
+                        onChange={(e) => setStart(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <Label htmlFor="end_dt">End Date *</Label>
+                    <Input
+                        id="end_dt"
+                        placeholder="Select end date"
+                        type="date"
+                        value={end}
+                        onChange={(e) => setEnd(e.target.value)}
                     />
                 </div>
 
@@ -87,7 +126,7 @@ const AddProjectModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     <Textarea
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Describe your project activities"
-                        className="h-52 w-full" />
+                        className="h-30 w-full" />
                 </div>
 
                 <div className="flex justify-end gap-2 pb-5">

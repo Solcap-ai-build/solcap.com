@@ -62,6 +62,7 @@ const InvoicesPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>All Invoices (0)</CardTitle>
+          <p className="text-gray-900">Manage all your invoices.</p>
         </CardHeader>
         <CardContent>
           <InvoicesEmpty onCreateInvoice={() => setModalOpen(true)} />

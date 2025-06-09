@@ -85,42 +85,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.id);
-      setSession(session);
-      if (session?.user) {
-        createUserObject(session.user).then(async userObj => {
-          console.log('Initial user object:', userObj);
-          setUser(userObj);
+    // supabase.auth.getSession().then(({ data: { session } }) => {
+    //   console.log('Initial session check:', session?.user?.id);
+    //   setSession(session);
+    //   if (session?.user) {
+    //     createUserObject(session.user).then(async userObj => {
+    //       console.log('Initial user object:', userObj);
+    //       setUser(userObj);
           
-          // Check onboarding status
-          try {
-            const { data, error } = await supabase
-              .from('business_onboarding')
-              .select('status')
-              .eq('user_id', session.user.id)
-              .single();
+    //       // Check onboarding status
+    //       try {
+    //         const { data, error } = await supabase
+    //           .from('business_onboarding')
+    //           .select('status')
+    //           .eq('user_id', session.user.id)
+    //           .single();
 
-            if (error) {
-              console.error('Error checking onboarding status:', error);
-              setHasCompletedOnboarding(false);
-            }
+    //         if (error) {
+    //           console.error('Error checking onboarding status:', error);
+    //           setHasCompletedOnboarding(false);
+    //         }
             
-            setHasCompletedOnboarding(true);
-          } catch (error) {
-            console.error('Error checking onboarding:', error);
-            setHasCompletedOnboarding(false);
-          }
+    //         setHasCompletedOnboarding(true);
+    //       } catch (error) {
+    //         console.error('Error checking onboarding:', error);
+    //         setHasCompletedOnboarding(false);
+    //       }
           
-          setIsLoading(false);
-        }).catch(error => {
-          console.error('Error creating initial user object:', error);
-          setIsLoading(false);
-        });
-      } else {
-        setIsLoading(false);
-      }
-    });
+    //       setIsLoading(false);
+    //     }).catch(error => {
+    //       console.error('Error creating initial user object:', error);
+    //       setIsLoading(false);
+    //     });
+    //   } else {
+    //     setIsLoading(false);
+    //   }
+    // });
 
     return () => subscription.unsubscribe();
   }, []);

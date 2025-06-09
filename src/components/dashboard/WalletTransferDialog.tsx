@@ -9,10 +9,10 @@ import { BankSelect } from "@/components/ui/bank-select";
 import { useToast } from '@/hooks/use-toast';
 
 interface WalletTransferDialogProps {
-  onTransfer?: (amount: number, method: string) => void;
+  onClose: () => void;
 }
 
-const WalletTransferDialog: React.FC<WalletTransferDialogProps> = ({ onTransfer }) => {
+const WalletTransferDialog: React.FC<WalletTransferDialogProps> = ({onClose}) => {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [bankName, setBankName] = useState('');
@@ -88,7 +88,7 @@ const WalletTransferDialog: React.FC<WalletTransferDialogProps> = ({ onTransfer 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-solar-green-600 hover:bg-solar-green-700">Transfer Funds</Button>
+        <Button className="bg-solar-green-600 hover:bg-solar-green-700m mt-3">Transfer Funds</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

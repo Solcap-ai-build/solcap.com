@@ -28,12 +28,10 @@ interface ModalProps {
 
 const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) => {
     const { toast } = useToast();
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
     const [due, setDue] = useState('');
     const [period, setPeriod] = useState('');
-    const [position, setPosition] = useState('');
-    const [businessVal, setBusinessVal] = useState('');
+    const [customer, setCustomer] = useState('');
+    const [amount, setAmount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { user, hasCompletedOnboarding } = useAuth();
     const [description, setDescription] = useState('');
@@ -41,7 +39,7 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
     if (!isOpen) return null;
 
     const handleSubmit = async () => {
-        if (!name || !email || !due || !period || businessVal) {
+        if (!customer || !due || !period) {
             toast({
                 title: "Missing information",
                 description: "Please fill in all required fields",
@@ -50,17 +48,15 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
             return;
         }
 
-        return
         setIsLoading(true);
 
         try {
-            const { data, error } = await supabase.from('teams').insert({
-                parent_id: user.id,
-                name: name,
-                email: email,
-                phone_number: phone,
-                position: position,
-                project_id: businessVal,
+            const { data, error } = await supabase.from('invoices').insert({
+                user_id: user.id,
+                customer,
+                amount,
+                due,
+                description,
             });
 
             if (error) {
@@ -72,13 +68,15 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
             }
 
             toast({
-                title: "Customer Added",
-                description: `Customer has been added successfully!!`,
+                title: "Invoice Created",
+                description: `Invoice has been Created successfully!!`,
             });
 
-            setName('');
-            setEmail('');
-            setPhone('');
+            setCustomer('');
+            setPeriod('');
+            setDue('');
+            setDescription('');
+            setAmount("")
             onClose();
         } catch (error) {
             console.error('Submit error:', error);
@@ -94,26 +92,32 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
             <div className="bg-white p-6 rounded shadow-md w-[580px]">
                 <h1 className="font-bold mb-5 text-lg">Create Invoice</h1>
 
+                
                 <div className="mb-5">
-                    <Label htmlFor="company-name">Company Name *</Label>
-                    <Input
-                        id="company-name"
-                        placeholder="Enter company name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
+                    <Label htmlFor="financing-term">Customer *</Label>
+                    <Select value={customer} onValueChange={setCustomer}>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select customer" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {/* {business.map((project) => (
+                                <SelectItem value={project.id}>{project.name}</SelectItem>
+                            ))} */}
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 <div className="mb-5">
-                    <Label htmlFor="company-email">Email address *</Label>
+                    <Label htmlFor="amount">Amount (₦) *</Label>
                     <Input
-                        id="company-email"
-                        placeholder="Enter email address"
-                        type='email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        id="amount"
+                        placeholder="eg. 5000000"
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
                     />
                 </div>
+
 
 
                 <div className="mb-5">
@@ -150,22 +154,9 @@ const AddInvoiceModal: React.FC<ModalProps> = ({ isOpen, onClose, business }) =>
                     />
                 </div>
 
-                <div className="mb-5">
-                    <Label htmlFor="financing-term">Select Business *</Label>
-                    <Select value={businessVal} onValueChange={setBusinessVal}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select business" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {/* {business.map((project) => (
-                                <SelectItem value={project.id}>{project.name}</SelectItem>
-                            ))} */}
-                        </SelectContent>
-                    </Select>
-                </div>
 
-                <div className="mb-10 pb-10">
-                    <Label htmlFor="description">Description *</Label>
+                <div className="mb-10 ">
+                    <Label htmlFor="description">Description (optional)</Label>
                     <Textarea
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter invoice descrition"

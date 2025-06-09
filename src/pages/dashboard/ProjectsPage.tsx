@@ -9,6 +9,14 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Trash } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
+import {
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Folder,
+  UsersIcon,
+  TimerIcon
+} from 'lucide-react';
 
 interface Project {
   created_at: string
@@ -18,6 +26,10 @@ interface Project {
   description: string
   updated_at: string
   owner_id: string
+  teams: string
+  start: string
+  end: string
+  client: string
 }
 
 const ProjectsPage = () => {
@@ -26,6 +38,32 @@ const ProjectsPage = () => {
   const handleClose = () => setModalOpen(false);
   const { user, hasCompletedOnboarding } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'processing':
+        return <Clock className="h-4 w-4 text-yellow-600" />;
+      case 'pending':
+        return <AlertCircle className="h-4 w-4 text-blue-600" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-gray-600" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'processing':
+        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'pending':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
+    }
+  };
 
   const fetchProject = async () => {
     if (!user) return;
@@ -53,18 +91,18 @@ const ProjectsPage = () => {
 
     try {
       const { error } = await supabase
-      .from('projects')
-      .delete()
-      .eq('id', id);
+        .from('projects')
+        .delete()
+        .eq('id', id);
 
       if (error) {
         console.error('Error deleting project:', error.message);
       }
 
-    toast({
+      toast({
         title: "project Deleted",
         description: `project has been deleted successfully!!`,
-    });
+      });
 
     } catch (error) {
       console.error('Error in deleting project:', error);
@@ -90,13 +128,12 @@ const ProjectsPage = () => {
       <Card>
         <CardHeader>
           <CardTitle>All Projects ({projects.length})</CardTitle>
+          <p className="mb-4">Manage your sollar installation projects.</p>
         </CardHeader>
         <CardContent>
-          {projects.length > 0
-
-            ? <>
-
-              <div className="space-y-4">
+          {projects.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects.map((project) => (
                   <div key={project.id} className="p-6 border rounded-lg space-y-4 relative">
 
@@ -109,43 +146,50 @@ const ProjectsPage = () => {
                       <Trash size={18} />
                     </button>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                    <div className="gap-4 space-y-4">
                       <div>
-                        <p className="text-gray-500">Project Name</p>
-                        <p className="font-medium">{project.name}</p>
+                        <h1 className="font-medium fw-bold text-xl md:text-2xl lg:text-3xl">{project.name}</h1>
                       </div>
 
                       <div>
-                        <p className="text-gray-500">Status</p>
-                        <p className="font-medium">{project.status}</p>
-                      </div>
-
-                      <div>
-                        <p className="text-gray-500">Created Date</p>
-                        <p className="font-medium">
-                          {new Date(project.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
+                        <p className={`flex items-center space-x-1 px-2 py-1 rounded-full border text-xs ${getStatusColor(project.status)}`}>
+                          {getStatusIcon(project.status)}
+                          <span className="capitalize">{project.status}</span>
                         </p>
                       </div>
 
                       <div>
-                        <p className="text-gray-500">Total Clients</p>
-                        <p className="font-medium">1</p>
+                        <p className="">{project.description}</p>
                       </div>
 
 
-
+                      <div className='pt-3'>
+                        <p className="text-gray-500 flex items-center space-x-1 px-2 py-1"><Folder className='mr-2' /> Client: {project.client}</p>
+                        <p className="text-gray-500 flex items-center space-x-1 px-2 py-1"><TimerIcon className='mr-2' />
+                          Timeline: 
+                          <span className='ml-3'>{new Date(project.start).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })} -
+                          {new Date(project.end).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                          })}
+                          </span>
+                        </p>
+                        <p className="text-gray-500 flex items-center space-x-1 px-2 py-1"><UsersIcon className='mr-2' /> Team: {project.teams} </p>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-
             </>
-            : <ProjectsEmpty onCreateProject={() => setModalOpen(true)} />
-          }
+          ) : (
+            <ProjectsEmpty onCreateProject={() => setModalOpen(true)} />
+          )}
+
         </CardContent>
       </Card>
     </div>

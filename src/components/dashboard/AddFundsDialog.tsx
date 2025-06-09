@@ -9,10 +9,10 @@ import { CreditCard, Landmark } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AddFundsDialogProps {
-  onAddFunds?: (amount: number, method: string) => void;
+  onClose: () => void;
 }
 
-const AddFundsDialog: React.FC<AddFundsDialogProps> = ({ onAddFunds }) => {
+const AddFundsDialog: React.FC<AddFundsDialogProps> = ({ onClose }) => {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'transfer'>('card');
@@ -45,7 +45,7 @@ const AddFundsDialog: React.FC<AddFundsDialogProps> = ({ onAddFunds }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Funds</Button>
+        <Button variant="outline" className='mt-3'>Add Funds</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
