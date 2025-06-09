@@ -16,6 +16,7 @@ import BusinessMetrics from '@/components/analytics/BusinessMetrics';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardMetricCards from '@/components/dashboard/DashboardMetricCards';
+import PurchaseOrderStatusChart from '@/components/dashboard/PurchaseOrderStatusChart';
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -103,6 +104,8 @@ const DashboardHome = () => {
       {/* Metrics Cards */}
       {/* <BusinessMetrics /> */}
       <DashboardMetricCards/>
+
+      <PurchaseOrderStatusChart/>
 
       {/* Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-2">
