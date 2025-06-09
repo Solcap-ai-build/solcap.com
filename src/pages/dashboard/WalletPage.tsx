@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Wallet } from 'lucide-react';
-import { WalletEmpty } from '@/components/empty-states';
+import { TransactionsEmpty, WalletEmpty } from '@/components/empty-states';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import axios from 'axios';
@@ -33,7 +33,7 @@ const WalletPage = () => {
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error fetching onboarding data:', error);
-        } 
+        }
         setCreditWallet(data)
       } catch (error) {
         console.error('Error in fetchCreditwallet:', error);
@@ -59,7 +59,7 @@ const WalletPage = () => {
 
     console.log("response----------------", response)
     await createDedicatedAccount(response.data.data.id)
-  
+
     return response.data.data.id;
   }
 
@@ -78,7 +78,7 @@ const WalletPage = () => {
         },
       }
     );
-  
+
     console.log("response----------------", response)
     return response.data;
   }
@@ -89,26 +89,77 @@ const WalletPage = () => {
         Authorization: `Bearer ${PAYSTACK_SECRET}`,
       },
     });
-  
+
     return response.data.data; // array of balances for different currencies
   }
-  
+
 
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold flex items-center">
-          <Wallet className="mr-2 h-6 w-6" /> Wallet
-        </h1>
-      </div>
-
       <Card>
-        <CardHeader>
-          <CardTitle>Wallet Balance</CardTitle>
+        <CardHeader className='bg-solar-green-300 round overflow-hidden'>
+          <div className="flex overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4 items-start justify-between">
+            <div className="">
+              <h1 className='text-2xl font-bold'>Available Balance</h1>
+              <p className="">Your funds avaialable for immediate use</p>
+            </div>
+            <div className="text-2xl font-bold">
+              ₦850,000
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <WalletEmpty onAddFunds={() => createCustomer("ganiyjamiu5@gmail.com")} />
+          <div className="mt-10">
+
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="w-full md:w-1/2 border p-4 round">
+                <h1 className=''>Credit Balance</h1>
+                <p className="text-lg font-bold">₦850,000</p>
+              </div>
+
+              <div className="w-full md:w-1/2 border p-4 round">
+                <h1 className=''>Pending Balance</h1>
+                <p className="text-lg font-bold">₦850,000</p>
+              </div>
+            </div>
+
+            <div className="flex mt-5 overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4 items-start justify-between">
+              <div className="">
+                <h1 className='font-semibold'>Total Balance</h1>
+              </div>
+              <div className="text-lg font-bold">
+                ₦850,000
+              </div>
+            </div>
+
+            <div className="flex border-t pt-2 mt-5 overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4 items-start justify-between">
+              <div className="">
+                <button className="mt-3 px-4 py-2 border border-solar-green-200  rounded-md hover:bg-green-600 transition">
+                  Add Funds
+                </button>
+              </div>
+              <div className="">
+                <button className="mt-3 px-4 py-2 border border-solar-green-400 bg-solar-green-500 text-white rounded-md hover:bg-solar-green-600 transition">
+                  Transfer Funds
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className='overflow-hidden'>
+          <div className="flex overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4">
+            <div className="">
+              <h1 className='text-2xl font-bold'>Transaction History</h1>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className='mb-10'>
+        <TransactionsEmpty  />
         </CardContent>
       </Card>
     </div>
