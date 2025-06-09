@@ -149,9 +149,6 @@ const WalletPage = () => {
                 />
               </div>
               <div className="">
-                {/* <button className="mt-3 px-4 py-2 border border-solar-green-400 bg-solar-green-500 text-white rounded-md hover:bg-solar-green-600 transition">
-                  Transfer Funds
-                </button> */}
                 <WalletTransferDialog
                   onClose={handleClose}
                 />
