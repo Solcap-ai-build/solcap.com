@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import CreditLimitCard from '@/components/dashboard/CreditLimitCard';
 import { useToast } from '@/hooks/use-toast';
+import CreditUsageChart from '@/components/dashboard/CreditUsageChart';
+import CreditLineUsageChart from '@/components/dashboard/CreditLineUsageChart';
 
 interface CreditWallet {
   avaialable_balance: number;
@@ -275,6 +277,8 @@ const CreditPage = () => {
 
             </Card>
           </div>
+
+          <CreditLineUsageChart/>
         </TabsContent>
 
          {/* transactions */}
