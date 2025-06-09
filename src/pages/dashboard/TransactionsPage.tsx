@@ -25,19 +25,19 @@ const TransactionsPage: React.FC = () => {
             View and manage all your financial transactions
           </p>
         </div>
-        <Button variant="outline" className="w-full sm:w-auto" disabled>
+        {/* <Button variant="outline" className="w-full sm:w-auto" disabled>
           <Download className="mr-2 h-4 w-4" />
           Export
-        </Button>
+        </Button> */}
       </div>
 
       {/* Filters */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center">
+          {/* <CardTitle className="flex items-center">
             <ListVideo className="mr-2 h-5 w-5 text-solar-green-600" />
             Transaction Filters
-          </CardTitle>
+          </CardTitle> */}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -81,7 +81,7 @@ const TransactionsPage: React.FC = () => {
       {/* Transaction list */}
       <Card>
         <CardHeader>
-          <CardTitle>Transactions (0)</CardTitle>
+          <CardTitle>Transaction History</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionsEmpty />

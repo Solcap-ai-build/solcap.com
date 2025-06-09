@@ -71,7 +71,8 @@ const PaymentLinkModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded shadow-md w-[580px]">
-                <h1 className="font-bold mb-5 text-lg">Create Invoice</h1>
+                <h1 className="font-bold text-lg">Create Payment Link</h1>
+                <p className="mb-5 text-gray-900 text-sm">Generate a payment link to send to your customer</p>
 
                 
                 <div className="mb-5">
