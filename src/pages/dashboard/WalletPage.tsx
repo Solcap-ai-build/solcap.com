@@ -6,6 +6,10 @@ import { TransactionsEmpty, WalletEmpty } from '@/components/empty-states';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
+import { Trash } from "lucide-react";
+import AddFundsModal from '@/components/dashboard/AddFundsDialog';
+
 
 const PAYSTACK_SECRET = ""
 
@@ -19,6 +23,10 @@ interface CreditWallet {
 const WalletPage = () => {
   const { user, hasCompletedOnboarding } = useAuth();
   const [creditWallet, setCreditWallet] = useState<CreditWallet | null>(null);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const handleClose = () => setModalOpen(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCreditwallet = async () => {
@@ -135,9 +143,10 @@ const WalletPage = () => {
 
             <div className="flex border-t pt-2 mt-5 overflow-hidden round border-b-gray-200 flex-col md:flex-row gap-4 items-start justify-between">
               <div className="">
-                <button className="mt-3 px-4 py-2 border border-solar-green-200  rounded-md hover:bg-green-600 transition">
-                  Add Funds
-                </button>
+                <AddFundsModal
+                  isOpen={isModalOpen}
+                  onClose={handleClose}
+                />
               </div>
               <div className="">
                 <button className="mt-3 px-4 py-2 border border-solar-green-400 bg-solar-green-500 text-white rounded-md hover:bg-solar-green-600 transition">
@@ -159,7 +168,7 @@ const WalletPage = () => {
           </div>
         </CardHeader>
         <CardContent className='mb-10'>
-        <TransactionsEmpty  />
+          <TransactionsEmpty />
         </CardContent>
       </Card>
     </div>
