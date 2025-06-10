@@ -114,7 +114,7 @@ const WalletPage = () => {
               <p className="">Your funds avaialable for immediate use</p>
             </div>
             <div className="text-2xl font-bold">
-              ₦850,000
+              ₦0.00
             </div>
           </div>
         </CardHeader>
@@ -124,12 +124,12 @@ const WalletPage = () => {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="w-full md:w-1/2 border p-4 round">
                 <h1 className=''>Credit Balance</h1>
-                <p className="text-lg font-bold">₦850,000</p>
+                <p className="text-lg font-bold">₦0.00</p>
               </div>
 
               <div className="w-full md:w-1/2 border p-4 round">
                 <h1 className=''>Pending Balance</h1>
-                <p className="text-lg font-bold">₦850,000</p>
+                <p className="text-lg font-bold">₦0.00</p>
               </div>
             </div>
 
@@ -138,7 +138,7 @@ const WalletPage = () => {
                 <h1 className='font-semibold'>Total Balance</h1>
               </div>
               <div className="text-lg font-bold">
-                ₦850,000
+                ₦0.00
               </div>
             </div>
 

@@ -17,6 +17,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardMetricCards from '@/components/dashboard/DashboardMetricCards';
 import PurchaseOrderStatusChart from '@/components/dashboard/PurchaseOrderStatusChart';
+import CreditLineUsageChart from '@/components/dashboard/CreditLineUsageChart';
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -106,11 +107,12 @@ const DashboardHome = () => {
       <DashboardMetricCards/>
 
       <PurchaseOrderStatusChart/>
+      <CreditLineUsageChart/>
 
       {/* Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Recent Activity */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Clock className="mr-2 h-5 w-5" />
@@ -139,10 +141,10 @@ const DashboardHome = () => {
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Quick Actions */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <TrendingUp className="mr-2 h-5 w-5" />
@@ -172,7 +174,7 @@ const DashboardHome = () => {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Alerts & Notifications */}

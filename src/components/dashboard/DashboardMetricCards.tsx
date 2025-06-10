@@ -10,8 +10,8 @@ const DashboardMetricCards = () => {
           <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">₦45,231.89</div>
-          <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+          <div className="text-2xl font-bold">₦0.00</div>
+          <p className="text-xs text-muted-foreground">+00.0% from last month</p>
         </CardContent>
       </Card>
 
@@ -20,8 +20,8 @@ const DashboardMetricCards = () => {
           <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">12</div>
-          <p className="text-xs text-muted-foreground">+2 new this month</p>
+          <div className="text-2xl font-bold">0</div>
+          <p className="text-xs text-muted-foreground">+0 new this month</p>
         </CardContent>
       </Card>
 
@@ -30,8 +30,8 @@ const DashboardMetricCards = () => {
           <CardTitle className="text-sm font-medium">Total POs</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">43</div>
-          <p className="text-xs text-muted-foreground">8 pending approval</p>
+          <div className="text-2xl font-bold">0</div>
+          <p className="text-xs text-muted-foreground">0 pending approval</p>
         </CardContent>
       </Card>
 
@@ -40,8 +40,8 @@ const DashboardMetricCards = () => {
           <CardTitle className="text-sm font-medium">Funding Approved</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">₦268,500</div>
-          <p className="text-xs text-muted-foreground">For 27 purchase orders</p>
+          <div className="text-2xl font-bold">₦0.00</div>
+          <p className="text-xs text-muted-foreground">For 0 purchase orders</p>
         </CardContent>
       </Card>
 
@@ -50,8 +50,8 @@ const DashboardMetricCards = () => {
           <CardTitle className="text-sm font-medium">Credit Used</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">₦175,000</div>
-          <p className="text-xs text-muted-foreground">14 days remaining</p>
+          <div className="text-2xl font-bold">₦0.00</div>
+          <p className="text-xs text-muted-foreground">29 days remaining</p>
         </CardContent>
       </Card>
     </div>
