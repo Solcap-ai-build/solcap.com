@@ -20,7 +20,7 @@ import PurchaseOrderStatusChart from '@/components/dashboard/PurchaseOrderStatus
 import CreditLineUsageChart from '@/components/dashboard/CreditLineUsageChart';
 
 const DashboardHome = () => {
-  const { user } = useAuth();
+  const { user, hasCompletedOnboarding } = useAuth();
 
   const checkOnboardingStatus = async () => {
     try {
@@ -31,8 +31,7 @@ const DashboardHome = () => {
         .single();
 
         if (!data){
-          console.log("error------------", error)
-          // window.location.href = "/onboarding"
+          window.location.href = "/onboarding"
         }
 
     } catch (error) {
