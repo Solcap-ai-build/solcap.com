@@ -18,14 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        console.log('User not authenticated, redirecting to login');
-        navigate('/login');
-        return;
-      }
-
-      if (requiredRole && user && !requiredRole.includes(user.role)) {
-        console.log('User does not have required role, redirecting to dashboard');
-        navigate('/dashboard');
+        // navigate('/login');
         return;
       }
     }

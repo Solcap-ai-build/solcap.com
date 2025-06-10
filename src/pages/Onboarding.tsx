@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,9 +62,30 @@ type OnboardingFormValues = z.infer<typeof onboardingSchema>;
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, checkOnboardingStatus } = useAuth();
+  const { user, checkOnboardingStatus, hasCompletedOnboarding } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const checkCurrOnboardingStatus = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('business_onboarding')
+        .select('status')
+        .eq('user_id', user.id)
+        .single();
+
+        if (data){
+          window.location.href = "/dashboard"
+        }
+
+    } catch (error) {
+      console.error('Error in checkCurrOnboardingStatus:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkCurrOnboardingStatus();
+  }, [user]);
 
   const form = useForm<OnboardingFormValues>({
     resolver: zodResolver(onboardingSchema),
